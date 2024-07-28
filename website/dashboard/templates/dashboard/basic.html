@@ -1,0 +1,102 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stock Marker Predictor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+  </head>
+  <body>
+    <header>
+      <nav>
+        <a href="#">Stock Market Predictor</a>
+      </nav>
+    </header>
+    <main>
+      <div class="wrapper">
+        <div class="leftpanel">
+          <div class="panel">
+            <form action="{% url 'load_data' %}" method="get">
+                {% csrf_token %}
+                <div class="inputs">
+                    <label for="ticker">Ticker:</label>
+                    <select name="ticker" id="ticker">
+                        <option value="AAPL" {% if form_data and form_data.ticker == "AAPL" %}selected{% endif %}>AAPL</option>
+                        <option value="GOOG" {% if form_data and form_data.ticker == "GOOG" %}selected{% endif %}>GOOG</option>
+                        <option value="NVDA" {% if form_data and form_data.ticker == "NVDA" %}selected{% endif %}>NVDA</option>
+                    </select>
+                </div>
+        
+                <div class="inputs">
+                    <label for="start_date">Start Date:</label>
+                    <input type="date" id="start_date" name="start_date" value="{{ form_data.start_date|default_if_none:'' }}" />
+                </div>
+        
+                <div class="inputs">
+                    <label for="end_date">End Date:</label>
+                    <input type="date" id="end_date" name="end_date" value="{{ form_data.end_date|default_if_none:'' }}" />
+                </div>
+        
+                <div class="inputs">
+                    <label for="time_interval">Time Interval:</label>
+                    <select name="time_interval" id="time_interval">
+                        <option value="test" {% if form_data and form_data.time_interval == "test" %}selected{% endif %}>test</option>
+                        <option value="test2" {% if form_data and form_data.time_interval == "test2" %}selected{% endif %}>test2</option>
+                    </select>
+                </div>
+        
+                <div class="checkbox-group">
+                    <input type="checkbox" id="200_ema" name="200_ema" value="200_ema" {% if form_data and form_data.200_ema %}checked{% endif %} />
+                    <label for="200_ema">200 EMA</label><br />
+                </div>
+        
+                <div class="checkbox-group">
+                    <input type="checkbox" id="21_ema" name="21_ema" value="21_ema" {% if form_data and form_data.21_ema %}checked{% endif %} />
+                    <label for="21_ema">21 EMA</label><br />
+                </div>
+        
+                <div class="checkbox-group">
+                    <input type="checkbox" id="9_ema" name="9_ema" value="9_ema" {% if form_data and form_data.9_ema %}checked{% endif %} />
+                    <label for="9_ema">9 EMA</label><br />
+                </div>
+                
+                <div class="checkbox-group">
+                    <input type="submit" id="loadButton" value="Load Data" />
+                </div>
+            </form>
+            {% if error_msg != None%}
+            <p class="error_form">{{error_msg}}</p>
+            {% endif %}
+          </div>
+        </div>
+        <div class="graphs">
+          <div class="price_chart">
+            <canvas id="price_graph"></canvas>
+          </div>
+          <div class="volume_chart">
+            <canvas id="volume_graph" ></canvas>
+          </div>
+          <div class="macd_chart">
+            <canvas id="macd_graph"></canvas>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+  {{ price_data|json_script:"price_data" }}
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.2.1/dist/chart.umd.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@1.1.1"></script>
+  <script type = "text/javascript" src="{% static 'js/script.js' %}"></script>
+  <script>
+    function hideButton() { document.getElementById('loadButton').style.display = 'none'; }
+  </script>  
+</html>
