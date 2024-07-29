@@ -91,16 +91,28 @@ nav {
   margin: 0;
   box-sizing: border-box;
   padding-left: 1em;
+  padding-right: 2em;
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 header nav a {
   text-decoration: none;
+}
+
+header nav a.title {
+  font-size: 2em;
   color: white;
   font-weight: bold;
-  font-size: 2em;
+}
+
+header nav a.back_to_projects {
+  font-size: 1.2em;
+  color: rgb(224, 221, 221);
 }
 
 .panel {
