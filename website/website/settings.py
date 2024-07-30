@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import os
-
+from celery.schedules import crontab
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -138,3 +138,12 @@ SECURE_SSL_REDIRECT = False
 CELERY_BROKER_URL = 'redis://127.0.0.1:6379' 
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_BACKEND = 'django-db'
+CELERY_CACHE_BACKEND = 'django-cache'
+CELERY_TASK_RESULT_EXPIRES = 10
+
+CELERY_BEAT_SCHEDULE = {
+    'cleanup-task-results-every-minute': {
+        'task': 'dashboard.tasks.cleanup_expired_task_results',
+        'schedule': crontab(),  # This will run the task every minute
+    },
+}
