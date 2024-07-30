@@ -144,6 +144,6 @@ CELERY_TASK_RESULT_EXPIRES = 10
 CELERY_BEAT_SCHEDULE = {
     'cleanup-task-results-every-minute': {
         'task': 'dashboard.tasks.cleanup_expired_task_results',
-        'schedule': crontab(),  # This will run the task every minute
+        'schedule': crontab(minute='*/30'),  # This will run the task every minute
     },
 }
