@@ -1,2 +1,6 @@
 **/env
+**/Redis-x64-3.0.504
 env.bat
+celery.bat
+redis.bat
+Redis-x64-3.0.504
