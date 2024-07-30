@@ -93,6 +93,7 @@ nav {
   box-sizing: border-box;
   padding-left: 1em;
   padding-right: 2em;
+  padding-top: 5px;
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
@@ -213,4 +214,15 @@ header nav a.back_to_projects {
 
 #macd_chart {
   width: 100%;
+}
+
+.logo-img {
+  height: 2.5em;
+  box-sizing: border-box;
+  padding-left: 10px;
+}
+
+.nav-wrapper {
+  display: flex;
+  align-items: center;
 }
