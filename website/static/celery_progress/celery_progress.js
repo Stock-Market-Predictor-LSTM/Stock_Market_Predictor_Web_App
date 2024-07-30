@@ -24,7 +24,7 @@ class CeleryProgressBar {
     // HTTP options
     this.onNetworkError = options.onNetworkError || this.onError;
     this.onHttpError = options.onHttpError || this.onError;
-    this.pollInterval = options.pollInterval || 500;
+    this.pollInterval = options.pollInterval || 100;
     this.maxNetworkRetryAttempts = options.maxNetworkRetryAttempts | 5;
     // Other options
     this.barColors = Object.assign(
