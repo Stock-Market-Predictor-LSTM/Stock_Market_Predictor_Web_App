@@ -16,7 +16,7 @@
   <body>
     <header>
       <nav>
-        <a class ='title' href="#">Stock Market Predictor</a>
+        <a class ='title' href="{% url 'dashboard' %}">Stock Market Predictor</a>
         <a class ='back_to_projects' href="https://ganels.com/">Back to Projects</a>
       </nav>
     </header>
@@ -45,14 +45,6 @@
                     <input type="date" id="end_date" name="end_date" value="{{ form_data.end_date|default_if_none:'' }}" />
                 </div>
         
-                <div class="inputs">
-                    <label for="time_interval">Time Interval:</label>
-                    <select name="time_interval" id="time_interval">
-                        <option value="test" {% if form_data and form_data.time_interval == "test" %}selected{% endif %}>test</option>
-                        <option value="test2" {% if form_data and form_data.time_interval == "test2" %}selected{% endif %}>test2</option>
-                    </select>
-                </div>
-        
                 <div class="checkbox-group">
                     <input type="checkbox" id="200_ema" name="200_ema" value="200_ema" {% if form_data and form_data.200_ema %}checked{% endif %} />
                     <label for="200_ema">200 EMA</label><br />
@@ -76,6 +68,14 @@
             <p class="error_form">{{error_msg}}</p>
             {% endif %}
           </div>
+          <div class="progress-bar-panel">
+            <div class='progress-wrapper'>
+              <div id='progress-bar' class='progress-bar' style="background-color: #68a9ef; width: 0%;">&nbsp;</div>
+            </div>
+            <div class="message-wrapper">
+              <div id="progress-bar-message">Waiting for data to be loaded...</div>
+            </div>
+          </div>
         </div>
         <div class="graphs">
           <div class="price_chart">
@@ -91,13 +91,23 @@
       </div>
     </main>
   </body>
-  {{ price_data|json_script:"price_data" }}
+  
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.2.1/dist/chart.umd.min.js"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@1.1.1"></script>
-  <script type = "text/javascript" src="{% static 'js/script.js' %}"></script>
+  <script src="{% static 'celery_progress/celery_progress.js' %}"></script>
   <script>
     function hideButton() { document.getElementById('loadButton').style.display = 'none'; }
+    document.addEventListener("DOMContentLoaded", function () {
+      var taskId = "{{ task_id|default_if_none:'' }}";
+      console.log(taskId)
+      if (taskId) {
+        var progressUrl = "{% url 'celery_progress:task_status' task_id %}";
+        CeleryProgressBar.initProgressBar(progressUrl);
+      }
+    });
+
+    
   </script>  
 </html>

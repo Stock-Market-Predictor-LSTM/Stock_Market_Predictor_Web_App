@@ -6,14 +6,15 @@ from celery_progress.backend import ProgressRecorder
 @shared_task(bind=True)
 def get_close_price(self,data):
     progress_recorder = ProgressRecorder(self)
-    start_date, end_date, ticker,_ = extract_data(data)
+    print('0')
+    start_date, end_date, ticker= extract_data(data)
 
     progress_recorder.set_progress(1, 4)
-
+    print('1')
     data_stock = yf.download(ticker, start=start_date, end= end_date)
 
     progress_recorder.set_progress(2, 4)
-
+    print('2')
     macd, signal_line = get_macd(data_stock)
     
     progress_recorder.set_progress(3, 4)
@@ -28,6 +29,7 @@ def get_close_price(self,data):
                    'ticker':ticker}
     
     progress_recorder.set_progress(4, 4)
+    print('done')
     return data_prices
 
 
@@ -35,8 +37,7 @@ def extract_data(data):
     start_date = data['start_date']
     end_date = data['end_date']
     ticker = data['ticker']
-    time_interval = data['time_interval']
-    return start_date, end_date, ticker,time_interval
+    return start_date, end_date, ticker
 
 def get_macd(data):
     data_copy = data.copy()

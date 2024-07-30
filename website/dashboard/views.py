@@ -3,6 +3,7 @@ from django.urls import reverse
 from datetime import datetime
 from dashboard.utilies_helpers.utilies import request_to_dict,validate_data
 from dashboard.utilies_helpers.fetch_stock_info import get_close_price
+from celery.result import AsyncResult
 
 # Create your views here.
 
@@ -11,6 +12,7 @@ def dashboard(request):
     data_valid = request.session.get('data_valid', None)
     error_msg = request.session.get('error_msg', None)
     price_data = request.session.get('price_data', None)
+    task_id = None
 
     if price_data == True:
         price_data = False
@@ -23,20 +25,28 @@ def dashboard(request):
         del request.session['error_msg']
     if price_data is not None:
         del request.session['price_data']
+    if task_id is not None:
+        del request.session['task_id']
 
-    return render(request, "dashboard/basic.html", {'form_data': form_data, 'data_valid': data_valid,'error_msg': error_msg, 'price_data': price_data})
+    return render(request, "dashboard/basic.html", {'form_data': form_data, 'data_valid': data_valid,'error_msg': error_msg, 'price_data': price_data, 'task_id':task_id})
 
 
 def load_data(request):
     data = request_to_dict(request)
     
     data_valid, error_msg = validate_data(data)
+    task_id = None
     if data_valid:
-        price_dict = get_close_price(data)
-        request.session['price_data'] = price_dict 
+        # Start the Celery task and get the task ID
+        task = get_close_price.delay(data)
+        task_id = task.id
+
+        print(task_id)
+        print(task.state)
 
     request.session['form_data'] = data
     request.session['data_valid'] = data_valid
     request.session['error_msg'] = error_msg
     
-    return redirect(reverse('dashboard'))
+    return render(request, "dashboard/basic.html", {'form_data': data, 'data_valid': data_valid,'error_msg': error_msg, 'price_data': None, 'task_id':task_id})
+    #return redirect(reverse('dashboard'))

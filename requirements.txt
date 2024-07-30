@@ -1,5 +1,6 @@
 amqp==5.2.0
 asgiref==3.8.1
+async-timeout==4.0.3
 beautifulsoup4==4.12.3
 billiard==4.2.0
 celery==5.4.0
@@ -16,7 +17,10 @@ Django==4.2.14
 django-celery-beat==2.6.0
 django-celery-results==2.5.1
 django-timezone-field==7.0
+dnspython==2.6.1
+eventlet==0.36.1
 frozendict==2.4.4
+greenlet==3.0.3
 html5lib==1.1
 idna==3.7
 kombu==5.3.7
@@ -30,6 +34,7 @@ prompt_toolkit==3.0.47
 python-crontab==3.2.0
 python-dateutil==2.9.0.post0
 pytz==2024.1
+redis==5.0.7
 requests==2.32.3
 six==1.16.0
 soupsieve==2.5

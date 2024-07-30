@@ -84,6 +84,7 @@ form select {
   color: red;
   font-weight: bold;
   font-size: 0.9em;
+  text-align: center;
 }
 
 nav {
@@ -115,17 +116,38 @@ header nav a.back_to_projects {
   color: rgb(224, 221, 221);
 }
 
+.progress-bar-panel {
+  background-color: white;
+  width: 70%;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  box-sizing: border-box;
+  padding-bottom: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.message-wrapper {
+  display: flex;
+  padding-top: 5px;
+}
+
+#progress-bar-message {
+  box-sizing: border-box;
+  position: relative;
+  margin: auto;
+}
+
 .panel {
   width: 70%;
-  background-color: rgb(184, 189, 168);
+  background-color: white;
   box-sizing: border-box;
-  padding: 40px 0;
+  padding-top: 40px;
   position: relative;
   margin-top: 20px;
   left: 50%;
   transform: translateX(-50%);
-  background-color: white;
-  border-radius: 10px;
   display: flex;
   justify-content: center; /* Center horizontally */
   align-items: center;

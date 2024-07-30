@@ -25,8 +25,6 @@ def validate_data(data):
         return (False, 'Please choose a start date.')
     if not data.get('end_date'):
         return (False, 'Please choose a end date.')
-    if not data.get('time_interval'):
-        return (False, 'Please choose a time interval.')
     
     
     try:
@@ -35,10 +33,10 @@ def validate_data(data):
         today = datetime.today().date()
         # Check that start date is before end date
         if start_date >= end_date:
-            return (False, 'Please make sure the start data is before the end date.')
+            return (False, 'Please make sure the start date is before the end date.')
         # Check that end date is at least today's date
         if end_date >= today:
-            return (False, 'Please make sure the end data is at before todays date.')
+            return (False, 'Please make sure the end date is before todays date.')
     except ValueError:
         return (False, 'Something werid has happened, please email me with your inputs :)')
     
