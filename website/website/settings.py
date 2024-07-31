@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'dashboard',
     'django_celery_results',
     'celery_progress',
-    'channels',
+    'daphne',
 ]
 
 MIDDLEWARE = [
