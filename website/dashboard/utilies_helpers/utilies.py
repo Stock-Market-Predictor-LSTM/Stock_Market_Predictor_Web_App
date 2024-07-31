@@ -35,8 +35,8 @@ def validate_data(data):
         if start_date >= end_date:
             return (False, 'Please make sure the start date is before the end date.')
         # Check that end date is at least today's date
-        if end_date >= today:
-            return (False, 'Please make sure the end date is before todays date.')
+        if end_date > today:
+            return (False, 'Please make sure the end date is today or earlier.')
     except ValueError:
         return (False, 'Something werid has happened, please email me with your inputs :)')
     

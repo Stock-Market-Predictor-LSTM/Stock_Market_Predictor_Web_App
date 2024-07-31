@@ -24,7 +24,7 @@ class CeleryProgressBar {
     // HTTP options
     this.onNetworkError = options.onNetworkError || this.onError;
     this.onHttpError = options.onHttpError || this.onError;
-    this.pollInterval = options.pollInterval || 100;
+    this.pollInterval = options.pollInterval || 1000;
     this.maxNetworkRetryAttempts = options.maxNetworkRetryAttempts | 5;
     // Other options
     this.barColors = Object.assign(
@@ -47,6 +47,8 @@ class CeleryProgressBar {
     }
     if (progressBarMessageElement) {
       progressBarMessageElement.textContent = "Sucessfuly trained and loaded. ";
+      document.getElementById("loadButton").style.display = "block";
+
       var myDict = result;
       let ctx_price = document.getElementById("price_graph").getContext("2d");
 
@@ -56,10 +58,37 @@ class CeleryProgressBar {
           labels: myDict.dates,
           datasets: [
             {
-              label: myDict.ticker,
-              data: myDict.close_prices,
-              borderColor: "rgba(75, 192, 192, 1)",
-              backgroundColor: "rgba(75, 192, 192, 0.2)",
+              label: myDict.ticker + " Close Prices",
+              data: myDict.dates.map((x, index) => ({
+                x: x,
+                y: myDict.close_prices[index],
+              })),
+              borderColor: "rgba(0, 151, 255, 1)",
+              backgroundColor: "rgba(0, 151, 255, 0.2)",
+              showLine: true,
+              order: 2,
+            },
+            {
+              label: "Train Data Prediction",
+              data: myDict.x_axis_close_train.map((x, index) => ({
+                x: x,
+                y: myDict.y_axis_close_train[index],
+              })),
+              borderColor: "rgba(255, 88, 0, 1)",
+              backgroundColor: "rgba(255, 88, 0, 0.2)",
+              showLine: true,
+              order: 1,
+            },
+            {
+              label: "Test Data Prediction",
+              data: myDict.x_axis_close_test.map((x, index) => ({
+                x: x,
+                y: myDict.y_axis_close_test[index],
+              })),
+              borderColor: "rgba(0, 255, 19, 1)",
+              backgroundColor: "rgba(0, 255, 19, 0.2)",
+              showLine: true,
+              order: 0,
             },
           ],
         },
@@ -232,6 +261,7 @@ class CeleryProgressBar {
     excMessage = excMessage || "";
     progressBarMessageElement.textContent =
       "Uh-Oh, something went wrong! " + excMessage;
+    document.getElementById("loadButton").style.display = "block";
   }
 
   onTaskErrorDefault(
@@ -257,6 +287,7 @@ class CeleryProgressBar {
   onIgnoredDefault(progressBarElement, progressBarMessageElement, result) {
     progressBarElement.style.backgroundColor = this.barColors.ignored;
     progressBarMessageElement.textContent = result || "Task result ignored!";
+    document.getElementById("loadButton").style.display = "block";
   }
 
   onProgressDefault(progressBarElement, progressBarMessageElement, progress) {
@@ -271,7 +302,9 @@ class CeleryProgressBar {
       }
     } else {
       progressBarMessageElement.textContent =
-        (progress.current / progress.total) * 100 + " % loaded" + description;
+        ((progress.current / progress.total) * 100).toFixed(2) +
+        " % training model" +
+        description;
     }
   }
 
@@ -362,6 +395,7 @@ class CeleryProgressBar {
         response = await fetch(this.progressUrl);
         success = true;
       } catch (networkError) {
+        document.getElementById("loadButton").style.display = "block";
         error = networkError;
         this.onNetworkError(
           this.progressBarElement,

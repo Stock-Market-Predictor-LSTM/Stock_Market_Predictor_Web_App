@@ -4,6 +4,8 @@ from datetime import datetime
 from dashboard.utilies_helpers.utilies import request_to_dict,validate_data
 from dashboard.utilies_helpers.fetch_stock_info import get_close_price
 from celery.result import AsyncResult
+from celery import Celery
+from website.celery import app
 
 # Create your views here.
 
@@ -12,6 +14,9 @@ def dashboard(request):
     data_valid = request.session.get('data_valid', None)
     error_msg = request.session.get('error_msg', None)
     price_data = request.session.get('price_data', None)
+
+
+
     task_id = None
 
     if price_data == True:
@@ -32,6 +37,9 @@ def dashboard(request):
 
 
 def load_data(request):
+    if request.session.get('task_id', None):
+        task = get_close_price.AsyncResult(request.session.get('task_id', None))
+        task.abort()
     data = request_to_dict(request)
     
     data_valid, error_msg = validate_data(data)
@@ -40,9 +48,9 @@ def load_data(request):
         # Start the Celery task and get the task ID
         task = get_close_price.delay(data)
         task_id = task.id
+        request.session['task_id'] = task.id
+        
 
-        print(task_id)
-        print(task.state)
 
     request.session['form_data'] = data
     request.session['data_valid'] = data_valid

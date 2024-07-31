@@ -101,11 +101,18 @@
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@1.1.1"></script>
   <script src="{% static 'celery_progress/celery_progress.js' %}"></script>
   <script>
-    function hideButton() { document.getElementById('loadButton').style.display = 'none'; }
+      const loadDataBtn = document.getElementById('loadButton');
+
+      // Add a click event listener to the button
+      loadDataBtn.addEventListener('click', () => {
+          // Hide the button by setting its display to 'none'
+          loadDataBtn.style.display = 'none';
+      });
+
     document.addEventListener("DOMContentLoaded", function () {
       var taskId = "{{ task_id|default_if_none:'' }}";
-      console.log(taskId)
       if (taskId) {
+        document.getElementById('loadButton').style.display = 'none';
         var progressUrl = "{% url 'celery_progress:task_status' task_id %}";
         CeleryProgressBar.initProgressBar(progressUrl);
       }

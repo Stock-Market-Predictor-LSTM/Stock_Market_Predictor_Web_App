@@ -1,21 +1,35 @@
 import yfinance as yf
 from celery import shared_task
 from celery_progress.backend import ProgressRecorder
-import time
+from celery.contrib.abortable import AbortableTask
+import sys
+sys.path.append('../dashboard')
+from dashboard.pytorch_models import train_model
 
 
-@shared_task(bind=True)
+
+@shared_task(bind=True, base = AbortableTask)
 def get_close_price(self,data):
+    progress_counter = 1
+    epochs = 10000
+
+    progress_total = epochs+4
     progress_recorder = ProgressRecorder(self)
     start_date, end_date, ticker= extract_data(data)
-
-    progress_recorder.set_progress(1, 4)
+    progress_recorder.set_progress(progress_counter, progress_total)
     data_stock = yf.download(ticker, start=start_date, end= end_date)
 
-    progress_recorder.set_progress(2, 4)
+    progress_counter+= 1
+    progress_recorder.set_progress(progress_counter, progress_total)
     macd, signal_line = get_macd(data_stock)
-    
-    progress_recorder.set_progress(3, 4)
+
+    progress_counter+= 1
+    progress_recorder.set_progress(progress_counter, progress_total)
+
+    x_axis_close_train, y_axis_close_train, x_axis_close_test, y_axis_close_test, c,t = train_model.train(self,data_stock,progress_recorder,progress_counter,progress_total,epochs)
+    progress_counter = c
+    progress_total = t
+
     times = [x.strftime('%d-%m-%Y') for x in data_stock.index]
     data_prices = {'dates': times, 
                    'close_prices':list(data_stock['Close']),
@@ -23,9 +37,14 @@ def get_close_price(self,data):
                    'open_prices':list(data_stock['Open']),
                    'macd':macd,
                    'signal_line':signal_line,
+                   'x_axis_close_train':x_axis_close_train,
+                   'y_axis_close_train':y_axis_close_train,
+                   'x_axis_close_test':x_axis_close_test,
+                   'y_axis_close_test':y_axis_close_test,
                    'ticker':ticker}
+    progress_counter+= 1
+    progress_recorder.set_progress(progress_counter, progress_total)
     
-    progress_recorder.set_progress(4, 4)
     return data_prices
 
 

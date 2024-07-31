@@ -16,6 +16,11 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 # Load task modules from all registered Django apps.
 app.autodiscover_tasks()
 
+app.conf.update(
+    task_time_limit=3600,  # Global time limit for all tasks
+    worker_shutdown_timeout=30,  # Time in seconds to wait for workers to finish
+    worker_concurrency=4,  # Number of concurrent worker processes
+)
 
 @app.task(bind=True, ignore_result=True)
 def debug_task(self):
