@@ -122,7 +122,7 @@
 
     if (taskId) {
         var task_id = '{{ task_id }}';  // Pass the task_id to the template
-        var ws = new WebSocket('ws://' + window.location.host + '/ws/queue_position/' + task_id + '/');
+        var ws = new WebSocket('wss://' + window.location.host + '/ws/queue_position/' + task_id + '/');
 
         ws.onmessage = function(event) {
             var data = JSON.parse(event.data);
