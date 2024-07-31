@@ -15,7 +15,10 @@ def dashboard(request):
     error_msg = request.session.get('error_msg', None)
     price_data = request.session.get('price_data', None)
 
-
+    if request.session.get('task_id', None):
+        task = get_close_price.AsyncResult(request.session.get('task_id', None))
+        task.abort()
+        request.session['task_id'] = None
 
     task_id = None
 
@@ -58,3 +61,6 @@ def load_data(request):
     
     return render(request, "dashboard/basic.html", {'form_data': data, 'data_valid': data_valid,'error_msg': error_msg, 'price_data': None, 'task_id':task_id})
     #return redirect(reverse('dashboard'))
+
+def abort(request):
+    return redirect(reverse('dashboard'))

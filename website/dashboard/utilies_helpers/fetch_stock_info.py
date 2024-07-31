@@ -11,7 +11,7 @@ from dashboard.pytorch_models import train_model
 @shared_task(bind=True, base = AbortableTask)
 def get_close_price(self,data):
     progress_counter = 1
-    epochs = 10000
+    epochs = 5000
 
     progress_total = epochs+4
     progress_recorder = ProgressRecorder(self)

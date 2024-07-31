@@ -68,20 +68,22 @@
                 <div class="checkbox-group">
                     <input type="submit" id="loadButton" value="Load Data" />
                 </div>
+
             </form>
             {% if error_msg != None%}
             <p class="error_form">{{error_msg}}</p>
             {% endif %}
-          </div>
-          <div class="progress-bar-panel">
-            <div class='progress-wrapper'>
-              <div id='progress-bar' class='progress-bar' style="background-color: #68a9ef; width: 0%;">&nbsp;</div>
+            <div class="progress-bar-panel">
+              <input type="abort" id="abort" value="Abort" />
+              <div class='progress-wrapper'>
+                <div id='progress-bar' class='progress-bar' style="background-color: #68a9ef; width: 0%;">&nbsp;</div>
+              </div>
+              <div class="message-wrapper">
+                <div id="progress-bar-message">Waiting for data to be loaded...</div>
+              </div>
             </div>
-            <div class="message-wrapper">
-              <div id="progress-bar-message">Waiting for data to be loaded...</div>
-            </div>
           </div>
-        </div>
+          </div>
         <div class="graphs">
           <div class="price_chart">
             <canvas id="price_graph"></canvas>
@@ -103,14 +105,16 @@
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@1.1.1"></script>
   <script src="{% static 'celery_progress/celery_progress.js' %}"></script>
   <script>
-      const loadDataBtn = document.getElementById('loadButton');
-      var taskId = "{{ task_id|default_if_none:'' }}";
 
-      // Add a click event listener to the button
-      loadDataBtn.addEventListener('click', () => {
-          // Hide the button by setting its display to 'none'
-          loadDataBtn.style.display = 'none';
-      });
+    const loadDataBtn = document.getElementById('loadButton');
+    const abortBtn = document.getElementById('abort');
+    var taskId = "{{ task_id|default_if_none:'' }}";
+
+    abortBtn.addEventListener('click', function() {
+      window.location.href ="{% url 'abort' %}";
+      abortBtn.style.display = 'none';
+    });
+
 
     document.addEventListener("DOMContentLoaded", function () {
       if (taskId) {
@@ -122,9 +126,11 @@
 
     if (taskId) {
         var task_id = '{{ task_id }}';  // Pass the task_id to the template
+        abortBtn.style.display = 'block';
+        loadDataBtn.style.display = 'none';
         var ws_scheme = window.location.protocol === "https:" ? "wss" : "ws";
-        var ws_port = ':8001';
-        var ws = new WebSocket(ws_scheme + '://' + window.location.hostname + '/ws/queue_position/' + task_id + '/');
+        var ws_port = ws_scheme === "ws" ? ":8001" : "";
+        var ws = new WebSocket(ws_scheme + '://' + window.location.hostname + ws_port + '/ws/queue_position/' + task_id + '/');
 
         ws.onmessage = function(event) {
             var data = JSON.parse(event.data);

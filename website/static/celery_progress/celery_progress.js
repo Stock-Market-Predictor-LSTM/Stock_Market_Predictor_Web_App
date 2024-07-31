@@ -48,6 +48,7 @@ class CeleryProgressBar {
     if (progressBarMessageElement) {
       progressBarMessageElement.textContent = "Sucessfuly trained and loaded. ";
       document.getElementById("loadButton").style.display = "block";
+      document.getElementById("abort").style.display = "none";
 
       var myDict = result;
       let ctx_price = document.getElementById("price_graph").getContext("2d");
@@ -262,6 +263,7 @@ class CeleryProgressBar {
     progressBarMessageElement.textContent =
       "Uh-Oh, something went wrong! " + excMessage;
     document.getElementById("loadButton").style.display = "block";
+    document.getElementById("abort").style.display = "none";
   }
 
   onTaskErrorDefault(
@@ -288,6 +290,7 @@ class CeleryProgressBar {
     progressBarElement.style.backgroundColor = this.barColors.ignored;
     progressBarMessageElement.textContent = result || "Task result ignored!";
     document.getElementById("loadButton").style.display = "block";
+    document.getElementById("abort").style.display = "none";
   }
 
   onProgressDefault(progressBarElement, progressBarMessageElement, progress) {
@@ -396,6 +399,7 @@ class CeleryProgressBar {
         success = true;
       } catch (networkError) {
         document.getElementById("loadButton").style.display = "block";
+        document.getElementById("abort").style.display = "none";
         error = networkError;
         this.onNetworkError(
           this.progressBarElement,
