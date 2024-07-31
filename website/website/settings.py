@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'dashboard',
     'django_celery_results',
     'celery_progress',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -72,6 +73,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'website.wsgi.application'
+ASGI_APPLICATION = 'website.asgi.application'
 
 
 # Database
@@ -144,6 +146,16 @@ CELERY_TASK_RESULT_EXPIRES = 10
 CELERY_BEAT_SCHEDULE = {
     'cleanup-task-results-every-minute': {
         'task': 'dashboard.tasks.cleanup_expired_task_results',
-        'schedule': crontab(minute='*/30'),  # This will run the task every minute
+        'schedule': crontab(minute='*/10'),  # This will run the task every minute
+    },
+}
+
+# Channels configuration
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [('127.0.0.1', 6379)],
+        },
     },
 }

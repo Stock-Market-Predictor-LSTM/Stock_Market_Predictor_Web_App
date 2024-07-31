@@ -1,5 +1,35 @@
 from datetime import datetime
 
+from django_celery_results.models import TaskResult
+from celery.result import AsyncResult
+from datetime import datetime
+from celery.signals import after_task_publish, task_postrun
+import redis
+
+redis_client = redis.StrictRedis(host='127.0.0.1', port=6379, db=0)
+
+
+@after_task_publish.connect
+def record_insertion_time(sender=None, headers=None, body=None, **kwargs):
+    task_id = headers['id']
+    current_time = datetime.utcnow()
+    insertion_time = current_time.timestamp() 
+    redis_client.zadd("celery.insertion_times", {task_id: insertion_time})
+
+
+@task_postrun.connect
+def remove_task_after_completion(sender=None, task_id=None, **kwargs):
+    # Remove the completed task from the Redis sorted set
+    redis_client.zrem("celery.insertion_times", task_id)
+
+def get_task_position(task_id):
+    position = redis_client.zrank("celery.insertion_times", task_id)
+    if position is not None:
+        return position + 1  # Redis ranks are zero-based
+    return None
+
+
+
 def request_to_dict(request):
     # Initialize an empty dictionary
     data = {}

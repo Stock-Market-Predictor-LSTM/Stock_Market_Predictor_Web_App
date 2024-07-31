@@ -12,11 +12,13 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <link rel="shortcut icon" href="{%  static 'img/favicon.ico' %}">
   </head>
   <body>
     <header>
       <nav>
         <a class ='title' href="{% url 'dashboard' %}">Stock Market Predictor</a>
+        <p id="queue-position">Your position in queue: please load data...</p>
         <div class="nav-wrapper">
           <a class ='back_to_projects' href="https://ganels.com/">Back to Projects</a>
           <a href="https://ganels.com/" class="logo-link"><img src="{% static 'img/logo_full.png' %}" class = 'logo-img' alt="Ganel's Project Website"></a>
@@ -102,6 +104,7 @@
   <script src="{% static 'celery_progress/celery_progress.js' %}"></script>
   <script>
       const loadDataBtn = document.getElementById('loadButton');
+      var taskId = "{{ task_id|default_if_none:'' }}";
 
       // Add a click event listener to the button
       loadDataBtn.addEventListener('click', () => {
@@ -110,13 +113,32 @@
       });
 
     document.addEventListener("DOMContentLoaded", function () {
-      var taskId = "{{ task_id|default_if_none:'' }}";
       if (taskId) {
         document.getElementById('loadButton').style.display = 'none';
         var progressUrl = "{% url 'celery_progress:task_status' task_id %}";
         CeleryProgressBar.initProgressBar(progressUrl);
       }
     });
+
+    if (taskId) {
+        var task_id = '{{ task_id }}';  // Pass the task_id to the template
+        var ws = new WebSocket('ws://' + window.location.host + '/ws/queue_position/' + task_id + '/');
+
+        ws.onmessage = function(event) {
+            var data = JSON.parse(event.data);
+            var position = data['position'];
+            if (position == null) {
+              document.getElementById('queue-position').innerText = 'Your position in queue: please load data...';
+              ws.close()
+            } else {
+              document.getElementById('queue-position').innerText = 'Your position in queue: ' + position;
+            }
+        };
+
+        ws.onerror = function(error) {
+            console.error('WebSocket error:', error);
+        };
+    }
 
     
   </script>  

@@ -226,3 +226,7 @@ header nav a.back_to_projects {
   display: flex;
   align-items: center;
 }
+
+nav p {
+  color: white;
+}
