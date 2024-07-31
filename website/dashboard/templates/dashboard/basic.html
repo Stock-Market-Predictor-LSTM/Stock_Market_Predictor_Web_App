@@ -124,7 +124,7 @@
         var task_id = '{{ task_id }}';  // Pass the task_id to the template
         var ws_scheme = window.location.protocol === "https:" ? "wss" : "ws";
         var ws_port = ':8001';
-        var ws = new WebSocket(ws_scheme + '://' + window.location.hostname + ws_port + '/ws/queue_position/' + task_id + '/');
+        var ws = new WebSocket(ws_scheme + '://' + window.location.hostname + '/ws/queue_position/' + task_id + '/');
 
         ws.onmessage = function(event) {
             var data = JSON.parse(event.data);
