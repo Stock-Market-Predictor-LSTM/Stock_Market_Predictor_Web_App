@@ -119,10 +119,8 @@ header nav a.back_to_projects {
 
 .progress-bar-panel {
   background-color: white;
-  width: 100%;
+  width: 95%;
   position: relative;
-  left: 50%;
-  transform: translateX(-50%);
   box-sizing: border-box;
   padding-bottom: 10px;
   padding-left: 10px;
@@ -141,12 +139,12 @@ header nav a.back_to_projects {
 }
 
 .panel {
-  width: 70%;
+  width: 100%;
   background-color: white;
   box-sizing: border-box;
   padding-top: 40px;
   position: relative;
-  margin-top: 20px;
+  margin-top: 10px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -156,34 +154,33 @@ header nav a.back_to_projects {
 }
 
 .leftpanel {
-  width: 30%;
+  width: 25%;
   height: calc(
     100vh - 3em
   ); /* Adjust height to fill remaining viewport minus header */
+  padding: 10px 10px 30px 10px;
 }
 
 .graphs {
-  width: 70%; /* Adjust width as needed */
+  width: 50%; /* Adjust width as needed */
   height: calc(100vh - 3em); /* Subtract header height from 100vh */
   position: relative;
   box-sizing: border-box;
-  padding: 10px 30px 30px 30px;
+  padding: 10px 10px 30px 10px;
   display: flex;
   flex-direction: column;
 }
 
 .graphs div {
   width: 100%;
-  margin-top: 10px;
-  border-radius: 10px;
   box-sizing: border-box;
   padding: 10px 10px 10px 10px;
 }
 
 .price_chart {
+  margin-top: 10px;
   width: 100%;
   height: 40%;
-  margin-top: 10px;
   background-color: rgb(255, 255, 255);
   flex: 4;
 }
@@ -244,4 +241,97 @@ nav p {
   display: none;
   margin-bottom: 5px;
   margin-top: 5px;
+}
+
+.ml-panel {
+  width: 100%;
+  border-radius: 10px;
+  background-color: white;
+  box-sizing: border-box;
+  padding-top: 20px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 10px;
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center;
+  flex-direction: column;
+}
+
+.ml-panel h2 {
+  margin: 0 0 0 0;
+}
+
+.ml-info #display {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.ml-info p {
+  font-size: 0.9em;
+}
+
+.ml-info .outputs {
+  margin-top: 5px;
+}
+
+.right-panel {
+  width: 50%;
+  box-sizing: border-box;
+  padding: 20px 10px 30px 10px;
+}
+
+.news {
+  position: relative;
+  border-radius: 10px;
+  width: 100%;
+  background-color: black;
+  box-sizing: border-box;
+  padding: 1px 5px 10px 5px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-color: white;
+  border-style: solid;
+  border-width: 2px;
+}
+
+.news-header {
+  position: relative;
+  box-sizing: border-box;
+  font-weight: bold;
+  text-align: center;
+  color: white;
+  margin: -10px;
+  padding: 0;
+}
+
+.news-item {
+  display: flex;
+  color: white;
+  font-size: 0.8em;
+  font-weight: bold;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.date-news {
+  position: relative;
+  text-align: end;
+  width: 15%;
+  padding-right: 10px;
+  color: rgb(161, 161, 161);
+}
+.news-input {
+  width: 100%;
+}
+.news-input p {
+  margin: 0px;
+}
+
+.date-news p {
+  margin: 0px;
 }

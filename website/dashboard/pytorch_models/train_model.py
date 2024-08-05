@@ -4,6 +4,9 @@ import torch.nn as nn
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from torch.autograd import Variable 
 from torch.optim.lr_scheduler import StepLR
+from sklearn import metrics
+import math
+from torch.optim.lr_scheduler import ReduceLROnPlateau
 
 
 class LSTM1(nn.Module):
@@ -35,16 +38,22 @@ class LSTM1(nn.Module):
         return out
 
 def split_train_test(data,training_split = 0.8):
+    data = data.copy()
     X = data.drop(columns = ['Close'])
     y = data[['Close']]
 
+    X_lagged = X.shift(1).dropna()
+    y = y.iloc[1:]
+
+    training_percentage = int(training_split * len(X_lagged))
+
+    features_used = ','.join(X_lagged.columns)
+    num_of_features = len(X_lagged.columns)
+
     mm = MinMaxScaler()
     ss = StandardScaler()
-
-    X_ss = ss.fit_transform(X)
+    X_ss = ss.fit_transform(X_lagged)
     y_mm = mm.fit_transform(y)
-
-    training_percentage = int(training_split * len(data))
 
     X_train = X_ss[:training_percentage, :]
     X_test = X_ss[training_percentage:, :]
@@ -62,7 +71,7 @@ def split_train_test(data,training_split = 0.8):
     X_train_tensors = torch.reshape(X_train_tensors,   (X_train_tensors.shape[0], 1, X_train_tensors.shape[1]))
     X_test_tensors = torch.reshape(X_test_tensors,  (X_test_tensors.shape[0], 1, X_test_tensors.shape[1])) 
 
-    return X_train_tensors, y_train_tensors, X_test_tensors, y_test_tensors,mm
+    return X_train_tensors, y_train_tensors, X_test_tensors, y_test_tensors,mm,features_used,num_of_features
 
 def train(async_data,data,progress_recorder,progress_counter,progress_total,num_epochs):
     torch.manual_seed(1)
@@ -70,23 +79,24 @@ def train(async_data,data,progress_recorder,progress_counter,progress_total,num_
     learning_rate = 0.0001 #0.001 lr
     
     training_split = 0.8
-    input_size = 5 #number of features
+    X_train, y_train, X_test, y_test,scaler,features_used,num_of_features = split_train_test(data_stock, training_split = training_split)
+
+    input_size = num_of_features #number of features
     hidden_size = 50 #number of features in hidden state
     num_layers = 1 #number of stacked lstm layers
 
     num_classes = 1 #number of output classes 
 
-    X_train, y_train, X_test, y_test,scaler = split_train_test(data_stock, training_split = training_split)
-
     model = LSTM1(num_classes, input_size, hidden_size, num_layers, X_train.shape[1])
     criterion = torch.nn.MSELoss()    # mean-squared error for regression
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate) 
-    scheduler = StepLR(optimizer, step_size=10, gamma=0.5)
-
+    scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=10)
+    
     patience = 10000
 
     train_loss_array = []
     test_loss_array = []
+    learning_rates = []
     models = []
     epochs_with_no_improvements = 0
     best_loss = float('infinity')
@@ -114,6 +124,11 @@ def train(async_data,data,progress_recorder,progress_counter,progress_total,num_
             loss_test = criterion(y_test_pred, y_test)
             test_loss_array.append(loss_test.item())
 
+        scheduler.step(loss_test)
+
+        current_lr = optimizer.param_groups[0]['lr']
+        learning_rates.append(current_lr)
+
         if loss_test < best_loss:
             best_loss = loss_test
             epochs_with_no_improvements = 0
@@ -122,7 +137,7 @@ def train(async_data,data,progress_recorder,progress_counter,progress_total,num_
             epochs_with_no_improvements += 1
 
         if epoch % 200 == 0:
-            progress_recorder.set_progress(progress_counter, progress_total)
+            progress_recorder.set_progress(progress_counter, progress_total,description='Training Model ...')
         progress_counter+= 1
 
         if epochs_with_no_improvements == patience:
@@ -131,8 +146,8 @@ def train(async_data,data,progress_recorder,progress_counter,progress_total,num_
         model.train()
 
     if epochs_with_no_improvements == patience:
-        progress_total = progress_counter + 1
-    progress_recorder.set_progress(progress_counter, progress_total)
+        progress_total = progress_counter + 1 + 78
+    progress_recorder.set_progress(progress_counter, progress_total,description='Training Model ...')
 
     best_model.eval()
     with torch.no_grad():
@@ -140,16 +155,23 @@ def train(async_data,data,progress_recorder,progress_counter,progress_total,num_
         train_x_pred = best_model(X_train)
 
     true_pred_close_test = scaler.inverse_transform(test_y_pred)
+    y_test_unscaled = scaler.inverse_transform(y_test)
     true_pred_close_train = scaler.inverse_transform(train_x_pred)
+
+    print(X_test.shape)
+    print(X_test[-1].shape)
+    print(X_test[-1])
+    RMSE = round(math.sqrt(metrics.mean_squared_error(y_test_unscaled.flatten(), true_pred_close_test.flatten())),5)
+
 
     dates = [x.strftime('%d-%m-%Y') for x in data_stock.index]
 
-    training_percentage = int(training_split * len(data_stock))
-    dates_train_x_axis = dates[:training_percentage]
+    training_percentage = int(training_split * len(data_stock))+1
+    dates_train_x_axis = dates[1:training_percentage]
     dates_test_x_axis = dates[training_percentage:]
 
     y_axis_close_test = list(true_pred_close_test.flatten())
     y_axis_close_train = list(true_pred_close_train.flatten())
 
     
-    return dates_train_x_axis, y_axis_close_train, dates_test_x_axis, y_axis_close_test,progress_counter,progress_total
+    return dates_train_x_axis, y_axis_close_train, dates_test_x_axis, y_axis_close_test,progress_counter,progress_total,features_used,RMSE

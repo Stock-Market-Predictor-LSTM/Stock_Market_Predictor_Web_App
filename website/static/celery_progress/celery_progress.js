@@ -47,11 +47,57 @@ class CeleryProgressBar {
     }
     if (progressBarMessageElement) {
       progressBarMessageElement.textContent = "Sucessfuly trained and loaded. ";
+
       document.getElementById("loadButton").style.display = "block";
       document.getElementById("abort").style.display = "none";
 
       var myDict = result;
+
+      document.getElementById("model_type").textContent = myDict.model_type;
+      document.getElementById("features_used").textContent =
+        myDict.features_used;
+      document.getElementById("RMSE").textContent = myDict.RMSE;
+
       let ctx_price = document.getElementById("price_graph").getContext("2d");
+
+      console.log(myDict.news_headline);
+
+      const news_inputs = [
+        document.getElementById("news_input_1"),
+        document.getElementById("news_input_2"),
+        document.getElementById("news_input_3"),
+        document.getElementById("news_input_4"),
+        document.getElementById("news_input_5"),
+        document.getElementById("news_input_6"),
+        document.getElementById("news_input_7"),
+        document.getElementById("news_input_8"),
+      ];
+
+      const date_news = [
+        document.getElementById("date_news_1"),
+        document.getElementById("date_news_2"),
+        document.getElementById("date_news_3"),
+        document.getElementById("date_news_4"),
+        document.getElementById("date_news_5"),
+        document.getElementById("date_news_6"),
+        document.getElementById("date_news_7"),
+        document.getElementById("date_news_8"),
+      ];
+
+      const length = Math.min(news_inputs.length, date_news.length);
+
+      for (let i = 0; i < length; i++) {
+        news_inputs[i].textContent = myDict.news_headline[i];
+        date_news[i].textContent = myDict.news_dates[i];
+
+        if (myDict.news_sentiments[i] == 0) {
+          news_inputs[i].style.color = "white";
+        } else if (myDict.news_sentiments[i] == 1) {
+          news_inputs[i].style.color = "#90EE90";
+        } else if (myDict.news_sentiments[i] == -1) {
+          news_inputs[i].style.color = "red";
+        }
+      }
 
       var priceChart = new Chart(ctx_price, {
         type: "line", // or any other type of chart
@@ -306,7 +352,7 @@ class CeleryProgressBar {
     } else {
       progressBarMessageElement.textContent =
         ((progress.current / progress.total) * 100).toFixed(2) +
-        " % training model" +
+        " % " +
         description;
     }
   }
