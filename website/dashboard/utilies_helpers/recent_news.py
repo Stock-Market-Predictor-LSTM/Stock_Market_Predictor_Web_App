@@ -67,7 +67,8 @@ def get_recent_news(async_data,progress_recorder,progress_counter,progress_total
     #options.binary_location = r'C:\Program Files\Mozilla Firefox\firefox.exe'
     progress_counter+= 1
     progress_recorder.set_progress(progress_counter, progress_total,description='Loading News Data ...')
-    driver = webdriver.Firefox(service = FirefoxService(f'{folder}/geckodriver.exe'),options = options)
+    #driver = webdriver.Firefox(service = FirefoxService(f'{folder}/geckodriver.exe'),options = options)
+    driver = webdriver.Firefox(options = options)
     wait = WebDriverWait(driver, 10)
     progress_counter+= 1
     progress_recorder.set_progress(progress_counter, progress_total,description='Loading News Data ...')
