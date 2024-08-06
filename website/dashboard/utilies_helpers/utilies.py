@@ -33,6 +33,13 @@ def remove_task_after_completion(sender=None, task_id=None, **kwargs):
     # Remove the completed task from the Redis sorted set
     redis_client.zrem("celery.insertion_times", task_id)
 
+    if task_id in task_drivers:
+        print('Driver is stopped')
+        driver = task_drivers[task_id]
+        driver.quit()
+        del task_drivers[task_id]
+        os.system('pkill firefox')
+
 def get_task_position(task_id):
     position = redis_client.zrank("celery.insertion_times", task_id)
     if position is not None:
