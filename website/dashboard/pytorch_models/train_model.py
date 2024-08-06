@@ -39,15 +39,15 @@ class LSTM1(nn.Module):
 
 def split_train_test(data,training_split = 0.8):
     data = data.copy()
-    X = data.drop(columns = ['Close'])
+    X = data
     y = data[['Close']]
 
-    X_lagged = X.shift(1).dropna()
+    X_lagged = X.iloc[:-1]
     y = y.iloc[1:]
 
     training_percentage = int(training_split * len(X_lagged))
 
-    features_used = ','.join(X_lagged.columns)
+    features_used = ', '.join(X_lagged.columns)
     num_of_features = len(X_lagged.columns)
 
     mm = MinMaxScaler()
@@ -71,7 +71,7 @@ def split_train_test(data,training_split = 0.8):
     X_train_tensors = torch.reshape(X_train_tensors,   (X_train_tensors.shape[0], 1, X_train_tensors.shape[1]))
     X_test_tensors = torch.reshape(X_test_tensors,  (X_test_tensors.shape[0], 1, X_test_tensors.shape[1])) 
 
-    return X_train_tensors, y_train_tensors, X_test_tensors, y_test_tensors,mm,features_used,num_of_features
+    return X_train_tensors, y_train_tensors, X_test_tensors, y_test_tensors,mm,features_used,num_of_features,X_lagged,y
 
 def train(async_data,data,progress_recorder,progress_counter,progress_total,num_epochs):
     torch.manual_seed(1)
@@ -79,7 +79,7 @@ def train(async_data,data,progress_recorder,progress_counter,progress_total,num_
     learning_rate = 0.0001 #0.001 lr
     
     training_split = 0.8
-    X_train, y_train, X_test, y_test,scaler,features_used,num_of_features = split_train_test(data_stock, training_split = training_split)
+    X_train, y_train, X_test, y_test,scaler,features_used,num_of_features,x_clean,y_clean = split_train_test(data_stock, training_split = training_split)
 
     input_size = num_of_features #number of features
     hidden_size = 50 #number of features in hidden state
@@ -166,12 +166,24 @@ def train(async_data,data,progress_recorder,progress_counter,progress_total,num_
 
     dates = [x.strftime('%d-%m-%Y') for x in data_stock.index]
 
-    training_percentage = int(training_split * len(data_stock))+1
-    dates_train_x_axis = dates[1:training_percentage]
-    dates_test_x_axis = dates[training_percentage:]
+    dates_train_x_axis = dates[1:len(true_pred_close_train)+1]
+    dates_test_x_axis = dates[len(true_pred_close_train)+1:]
 
     y_axis_close_test = list(true_pred_close_test.flatten())
     y_axis_close_train = list(true_pred_close_train.flatten())
 
+    corro_features,corrolation_values = calculate_correlations(x_clean,y_clean)
     
-    return dates_train_x_axis, y_axis_close_train, dates_test_x_axis, y_axis_close_test,progress_counter,progress_total,features_used,RMSE
+    return dates_train_x_axis, y_axis_close_train, dates_test_x_axis, y_axis_close_test,progress_counter,progress_total,features_used,RMSE,corro_features,corrolation_values
+
+
+def calculate_correlations(x_clean,y_clean):
+    x_clean = x_clean.copy()
+    y_clean = y_clean.copy()
+    x_clean['next_close'] = y_clean['Close'].to_list()
+    correlation_matrix = x_clean.corr()
+    correlations_with_single_var = correlation_matrix['next_close'].drop('next_close')
+    features = list(correlations_with_single_var.index)
+    corrolation_values = list(correlations_with_single_var.values)
+    corrolation_values = [abs(x) for x in corrolation_values]
+    return features,corrolation_values

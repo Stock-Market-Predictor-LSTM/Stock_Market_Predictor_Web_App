@@ -17,6 +17,7 @@ def dashboard(request):
 
     if request.session.get('task_id', None):
         task = get_close_price.AsyncResult(request.session.get('task_id', None))
+        task.revoke(terminate=True)
         task.abort()
         request.session['task_id'] = None
 
@@ -44,7 +45,7 @@ def load_data(request):
         task = get_close_price.AsyncResult(request.session.get('task_id', None))
         task.abort()
     data = request_to_dict(request)
-    
+    print(data)
     data_valid, error_msg = validate_data(data)
     task_id = None
     if data_valid:

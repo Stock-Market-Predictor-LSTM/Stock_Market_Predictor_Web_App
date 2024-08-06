@@ -155,9 +155,8 @@ header nav a.back_to_projects {
 
 .leftpanel {
   width: 25%;
-  height: calc(
-    100vh - 3em
-  ); /* Adjust height to fill remaining viewport minus header */
+  height: calc(100vh - 3em);
+  box-sizing: border-box;
   padding: 10px 10px 30px 10px;
 }
 
@@ -283,6 +282,7 @@ nav p {
   width: 50%;
   box-sizing: border-box;
   padding: 20px 10px 30px 10px;
+  height: calc(100vh - 3em);
 }
 
 .news {
@@ -304,9 +304,13 @@ nav p {
   box-sizing: border-box;
   font-weight: bold;
   text-align: center;
+  margin: 0px;
+  padding: 5px 5px 5px 5px;
+}
+
+.news-header h2 {
   color: white;
-  margin: -10px;
-  padding: 0;
+  margin: 0px 0px 0px 0px;
 }
 
 .news-item {
@@ -334,4 +338,47 @@ nav p {
 
 .date-news p {
   margin: 0px;
+}
+
+.corrolation_chart {
+  position: relative;
+  margin-top: 10px;
+  width: 100%;
+  height: 25%;
+  padding-left: 10px;
+  padding-right: 10px;
+  box-sizing: border-box;
+  background-color: rgb(255, 255, 255);
+  flex: 4;
+}
+
+#corrolation_graph {
+  width: 100%;
+}
+
+.sentiment-explain {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.sentiment-explain p {
+  margin: 0px 0px 0px 0px;
+  padding-top: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  box-sizing: border-box;
+  font-size: 0.7em;
+}
+
+.positive_sent {
+  color: #90ee90;
+}
+
+.neutral_sent {
+  color: white;
+}
+
+.negative_sent {
+  color: red;
 }

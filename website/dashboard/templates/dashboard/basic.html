@@ -51,8 +51,8 @@
                 </div>
         
                 <div class="checkbox-group">
-                    <input type="checkbox" id="200_ema" name="200_ema" value="200_ema" {% if form_data and form_data.200_ema %}checked{% endif %} />
-                    <label for="200_ema">200 EMA</label><br />
+                    <input type="checkbox" id="26_ema" name="26_ema" value="26_ema" {% if form_data and form_data.26_ema %}checked{% endif %} />
+                    <label for="26_ema">26 EMA</label><br />
                 </div>
         
                 <div class="checkbox-group">
@@ -112,6 +112,11 @@
           <div class="news">
             <div class = 'news-header'>
               <h2>Recent News</h2>
+              <div class="sentiment-explain">
+                <p class = 'positive_sent'>Positive Sentiment</p>
+                <p class = 'neutral_sent'>Neutral Sentiment</p>
+                <p class = 'negative_sent'>Negative Sentiment</p>
+              </div>
             </div>
             <div class="news-wrapper">
               
@@ -129,7 +134,7 @@
                   <p id="date_news_2">Date</p>
                 </div>
                 <div class = "news-input" >
-                  <p id="news_input_2">News text here Apple is crazy Woah!eg erg erg erger gwerge gwrge rger gerg erg erg erger ger ger gwerg erg erger gwergerg erg erge gerg erg erg </p>
+                  <p id="news_input_2">News text here Apple is crazy Woah!eg erg erg erger </p>
                 </div>
               </div>
             
@@ -139,7 +144,7 @@
                   <p id="date_news_3">Date</p>
                 </div>
                 <div class = "news-input" >
-                  <p id="news_input_3">News text here Apple is crazy Woah!eg erg erg erger gwerge gwrge rger gerg erg erg erger ger ger gwerg erg erger gwergerg erg erge gerg erg erg </p>
+                  <p id="news_input_3">News text here Apple is crazy Woah!eg erg erg erger gwerge </p>
                 </div>
               </div>
             
@@ -159,7 +164,7 @@
                   <p id="date_news_5">Date</p>
                 </div>
                 <div class = "news-input" >
-                  <p id="news_input_5">News text here Apple is crazy Woah!eg erg erg erger gwerge gwrge rger gerg erg erg erger ger ger gwerg erg erger gwergerg erg erge gerg erg erg </p>
+                  <p id="news_input_5">News text here Apple is crazy Woah!eg erg erg erger</p>
                 </div>
               </div>
 
@@ -168,7 +173,7 @@
                   <p id="date_news_6">Date</p>
                 </div>
                 <div class = "news-input" >
-                  <p id="news_input_6">News text here Apple is crazy Woah!eg erg erg erger gwerge gwrge rger gerg erg erg erger ger ger gwerg erg erger gwergerg erg erge gerg erg erg </p>
+                  <p id="news_input_6">News text here Apple is crazy Woah!eg erg erg erger</p>
                 </div>
               </div>
 
@@ -177,7 +182,7 @@
                   <p id="date_news_7">Date</p>
                 </div>
                 <div class = "news-input" >
-                  <p id="news_input_7">News text here Apple is crazy Woah!eg erg erg erger gwerge gwrge rger gerg erg erg erger ger ger gwerg erg erger gwergerg erg erge gerg erg erg </p>
+                  <p id="news_input_7">News text here Apple is crazy Woah!eg</p>
                 </div>
               </div>
 
@@ -191,6 +196,9 @@
               </div>
               
             </div>
+          </div>
+          <div class="corrolation_chart">
+            <canvas id="corrolation_graph"></canvas>
           </div>
         </div>
       </div>

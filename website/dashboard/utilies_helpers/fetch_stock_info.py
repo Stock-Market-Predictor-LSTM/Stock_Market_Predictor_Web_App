@@ -25,10 +25,17 @@ def get_close_price(self,data):
     progress_recorder.set_progress(progress_counter, progress_total,description='Calculating Indicators ...')
     macd, signal_line = get_macd(data_stock)
 
+    if '26_ema' in data:
+        data_stock['26 EMA'] = data_stock['Close'].ewm(span=26, adjust=False).mean()
+    if '21_ema' in data:
+        data_stock['21 EMA'] = data_stock['Close'].ewm(span=21, adjust=False).mean()
+    if '9_ema' in data:
+        data_stock['9 EMA'] = data_stock['Close'].ewm(span=9, adjust=False).mean()
+    data_stock = data_stock.dropna()
     progress_counter+= 1
     progress_recorder.set_progress(progress_counter, progress_total,description='Calculating Indicators ...')
 
-    x_axis_close_train, y_axis_close_train, x_axis_close_test, y_axis_close_test, c,t,features_used,RMSE = train_model.train(self,data_stock,progress_recorder,progress_counter,progress_total,epochs)
+    x_axis_close_train, y_axis_close_train, x_axis_close_test, y_axis_close_test, c,t,features_used,RMSE,corro_features,corrolation_values = train_model.train(self,data_stock,progress_recorder,progress_counter,progress_total,epochs)
     progress_counter = c
     progress_total = t
 
@@ -55,7 +62,9 @@ def get_close_price(self,data):
                    'Next_Market_Day': next_trading_day,
                    'news_dates':news_dates,
                    'news_headline':news_headline,
-                   'news_sentiments':news_sentiments,}
+                   'news_sentiments':news_sentiments,
+                   'corro_features':corro_features,
+                   'corrolation_values':corrolation_values}
     
     progress_counter+= 1
     progress_recorder.set_progress(progress_counter, progress_total,description='Loading Data ...')

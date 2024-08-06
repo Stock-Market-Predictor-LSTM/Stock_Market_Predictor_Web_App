@@ -60,8 +60,6 @@ class CeleryProgressBar {
 
       let ctx_price = document.getElementById("price_graph").getContext("2d");
 
-      console.log(myDict.news_headline);
-
       const news_inputs = [
         document.getElementById("news_input_1"),
         document.getElementById("news_input_2"),
@@ -280,6 +278,67 @@ class CeleryProgressBar {
               pan: {
                 enabled: true, // Enable panning
                 mode: "xy", // Allow panning in both directions
+              },
+            },
+          },
+        },
+      });
+
+      let ctx_corro = document
+        .getElementById("corrolation_graph")
+        .getContext("2d");
+      var corroChart = new Chart(ctx_corro, {
+        type: "bar",
+        data: {
+          labels: myDict.corro_features,
+          datasets: [
+            {
+              data: myDict.corrolation_values,
+              backgroundColor: "rgba(192, 75, 75, 1)",
+              borderColor: "rgba(192, 75, 75, 0.2)",
+              borderWidth: 1,
+            },
+          ],
+        },
+        options: {
+          plugins: {
+            title: {
+              display: true,
+              text: "Previous Day Feature Corrolations with Next Day Closing Price",
+              font: {
+                size: 12,
+              },
+            },
+            legend: {
+              display: false,
+            },
+            zoom: {
+              zoom: {
+                wheel: {
+                  enabled: true, // Enable zooming with the mouse wheel
+                },
+                pinch: {
+                  enabled: true, // Enable zooming with pinch gestures
+                },
+                mode: "xy", // Allow zooming in both directions
+              },
+              pan: {
+                enabled: true, // Enable panning
+                mode: "xy", // Allow panning in both directions
+              },
+            },
+          },
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+            },
+            x: {
+              ticks: {
+                font: {
+                  size: 12, // Set this to the desired font size for the x-axis labels
+                },
               },
             },
           },

@@ -66,14 +66,16 @@ def get_recent_news(async_data,progress_recorder,progress_counter,progress_total
     options.add_argument("--headless")
     # options.add_argument("--no-sandbox")  # Reduce resource usage
     # options.add_argument("--disable-gpu") 
-    #options.binary_location = r'C:\Program Files\Mozilla Firefox\firefox.exe'
+
+    #options.binary_location = r'C:\Program Files\Mozilla Firefox\firefox.exe' #COMMENT BEFORE COMMITTING
     progress_counter+= 1
-    progress_recorder.set_progress(progress_counter, progress_total,description='Loading News1 Data ...')
-    #driver = webdriver.Firefox(service = FirefoxService(f'{folder}/geckodriver.exe'),options = options)
-    driver = webdriver.Firefox(options = options)
+    progress_recorder.set_progress(progress_counter, progress_total,description='Starting News Scraping ...')
+    #driver = webdriver.Firefox(service = FirefoxService(f'{folder}/geckodriver.exe'),options = options) #COMMENT BEFORE COMMITTING
+    driver = webdriver.Firefox(options = options) #UNCOMMENT BEFORE 
+    
     wait = WebDriverWait(driver, 10)
     progress_counter+= 1
-    progress_recorder.set_progress(progress_counter, progress_total,description='Loading News2 Data ...')
+    progress_recorder.set_progress(progress_counter, progress_total,description='Scraping News ...')
     driver.get(f'https://www.benzinga.com/quote/{ticker.upper()}/news')
 
     div_elements = wait.until(EC.presence_of_all_elements_located((By.CLASS_NAME, "content-title")))
@@ -84,7 +86,7 @@ def get_recent_news(async_data,progress_recorder,progress_counter,progress_total
             break
         progress_counter+= 1
         if i % 10 == 0:
-            progress_recorder.set_progress(progress_counter, progress_total,description='Loading News3 Data ...')
+            progress_recorder.set_progress(progress_counter, progress_total,description='Collecting News Data ...')
         # Use a try-except block to handle any potential issues with finding elements
         try:
             span = div.find_element(By.TAG_NAME, 'span')
@@ -124,7 +126,7 @@ def get_recent_news(async_data,progress_recorder,progress_counter,progress_total
         except Exception as e:
             print(f"Error processing element {i}: {e}")
     driver.quit()
-    progress_recorder.set_progress(progress_counter, progress_total,description='Loading News4 Data ...')
+    progress_recorder.set_progress(progress_counter, progress_total,description='Collecting News Data ...')
     progress_total = progress_counter + 1 + 8
     progress_recorder.set_progress(progress_counter, progress_total,description='Evaluating Sentiment ...')
     while len(headline) < 8:
