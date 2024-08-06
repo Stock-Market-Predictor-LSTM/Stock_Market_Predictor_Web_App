@@ -13,6 +13,7 @@ task_drivers = {}
 @task_revoked.connect
 def on_task_revoked(request, terminated, signum, expired, **kwargs):
     if request.id in task_drivers:
+        print('Driver is stopped')
         driver = task_drivers[request.id]
         driver.quit()
         del task_drivers[request.id]

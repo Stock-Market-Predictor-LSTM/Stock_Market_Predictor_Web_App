@@ -55,6 +55,7 @@ class EntitySentimentModel(nn.Module):
 
 
 def get_recent_news(async_data,progress_recorder,progress_counter,progress_total,ticker):
+    print(f'TASK DRIVERS {task_drivers}')
     tokenizer = BertTokenizer.from_pretrained(f'{folder}/tokenizer_directoryv4')
     model = EntitySentimentModel(n_classes=3)
     state_dict = torch.load(f'{folder}/entire_modelv4_state_dict.pth', map_location=device)
@@ -69,6 +70,7 @@ def get_recent_news(async_data,progress_recorder,progress_counter,progress_total
     progress_recorder.set_progress(progress_counter, progress_total,description='Starting News Scraping ...')
     #driver = webdriver.Firefox(service = FirefoxService(f'{folder}/geckodriver.exe'),options = options) #COMMENT BEFORE COMMITTING
     driver = webdriver.Firefox(options = options) #UNCOMMENT BEFORE 
+
     task_drivers[async_data.request.id] = driver
 
     wait = WebDriverWait(driver, 10)
