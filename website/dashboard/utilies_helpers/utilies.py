@@ -3,11 +3,19 @@ from datetime import datetime
 from django_celery_results.models import TaskResult
 from celery.result import AsyncResult
 from datetime import datetime
-from celery.signals import after_task_publish, task_postrun
+from celery.signals import after_task_publish, task_postrun,task_revoked
 import redis
 
 redis_client = redis.StrictRedis(host='127.0.0.1', port=6379, db=0)
+task_drivers = {}
 
+
+@task_revoked.connect
+def on_task_revoked(request, terminated, signum, expired, **kwargs):
+    if request.id in task_drivers:
+        driver = task_drivers[request.id]
+        driver.quit()
+        del task_drivers[request.id]
 
 @after_task_publish.connect
 def record_insertion_time(sender=None, headers=None, body=None, **kwargs):
