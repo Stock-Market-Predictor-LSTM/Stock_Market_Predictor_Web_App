@@ -5,6 +5,7 @@ from celery.result import AsyncResult
 from datetime import datetime
 from celery.signals import after_task_publish, task_postrun,task_revoked
 import redis
+import os
 
 redis_client = redis.StrictRedis(host='127.0.0.1', port=6379, db=0)
 task_drivers = {}
@@ -17,6 +18,7 @@ def on_task_revoked(request, terminated, signum, expired, **kwargs):
         driver = task_drivers[request.id]
         driver.quit()
         del task_drivers[request.id]
+        os.system('pkill firefox')
 
 @after_task_publish.connect
 def record_insertion_time(sender=None, headers=None, body=None, **kwargs):
