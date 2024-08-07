@@ -205,7 +205,7 @@ header nav a.back_to_projects {
   min-height: 0;
 }
 
-.chart_button button {
+.chart_button input {
   position: relative;
   top: -3px;
   left: 50%;
