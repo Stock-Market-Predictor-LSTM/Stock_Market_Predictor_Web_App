@@ -25,17 +25,43 @@ def get_close_price(self,data):
     progress_recorder.set_progress(progress_counter, progress_total,description='Calculating Indicators ...')
     macd, signal_line = get_macd(data_stock)
 
+    if 'macd_signal' in data:
+        data_stock['EMA12'] = data_stock['Close'].ewm(span=12, adjust=False).mean()
+        data_stock['EMA26'] = data_stock['Close'].ewm(span=26, adjust=False).mean()
+        data_stock['MACD'] = data_stock['EMA12'] - data_stock['EMA26']
+        data_stock['Signal Line'] = data_stock['MACD'].ewm(span=9, adjust=False).mean()
+        data_stock = data_stock.drop(columns = ['EMA12','EMA26'])
     if '26_ema' in data:
         data_stock['26 EMA'] = data_stock['Close'].ewm(span=26, adjust=False).mean()
     if '21_ema' in data:
         data_stock['21 EMA'] = data_stock['Close'].ewm(span=21, adjust=False).mean()
     if '9_ema' in data:
         data_stock['9 EMA'] = data_stock['Close'].ewm(span=9, adjust=False).mean()
+    if 'high' not in data:
+        data_stock = data_stock.drop(columns = ['High'])
+    if 'low' not in data:
+        data_stock = data_stock.drop(columns = ['Low'])
+    if 'adj_close' not in data:
+        data_stock = data_stock.drop(columns = ['Adj Close'])
+
     data_stock = data_stock.dropna()
+    volume = list(data_stock['Volume'])
+    open = list(data_stock['Open'])
+    
+    if 'volume' not in data:
+        data_stock = data_stock.drop(columns = ['Volume'])
+    if 'open' not in data:
+        data_stock = data_stock.drop(columns = ['Open'])
     progress_counter+= 1
     progress_recorder.set_progress(progress_counter, progress_total,description='Calculating Indicators ...')
 
-    x_axis_close_train, y_axis_close_train, x_axis_close_test, y_axis_close_test, c,t,features_used,RMSE,corro_features,corrolation_values = train_model.train(self,data_stock,progress_recorder,progress_counter,progress_total,epochs)
+    x_axis_close_train, y_axis_close_train, x_axis_close_test, y_axis_close_test, c, t, \
+    features_used, RMSE, corro_features, corrolation_values, naive_dates,r_squared,r_squared_naive, \
+    RMSE_naive,train_loss,test_loss,next_day_close = \
+    train_model.train(self, data_stock, progress_recorder, progress_counter, progress_total, epochs)
+
+    beat_naive = RMSE < RMSE_naive
+
     progress_counter = c
     progress_total = t
 
@@ -47,14 +73,14 @@ def get_close_price(self,data):
     next_trading_day = get_next_trading_day(times[-1])
     data_prices = {'dates': times, 
                    'close_prices':list(data_stock['Close']),
-                   'volume':list(data_stock['Volume']), 
-                   'open_prices':list(data_stock['Open']),
-                   'macd':macd,
-                   'signal_line':signal_line,
+                   'volume':volume, 
+                   'open_prices':open,
                    'x_axis_close_train':x_axis_close_train,
                    'y_axis_close_train':y_axis_close_train,
                    'x_axis_close_test':x_axis_close_test,
                    'y_axis_close_test':y_axis_close_test,
+                   'naive_dates':naive_dates,
+                   'naive_close':list(data_stock['Close'].iloc[:-1]),
                    'ticker':ticker,
                    'features_used':features_used,
                    'model_type': 'LSTM',
@@ -64,7 +90,15 @@ def get_close_price(self,data):
                    'news_headline':news_headline,
                    'news_sentiments':news_sentiments,
                    'corro_features':corro_features,
-                   'corrolation_values':corrolation_values}
+                   'corrolation_values':corrolation_values,
+                   'r_squared':r_squared,
+                   'r_squared_naive':r_squared_naive,
+                   'RMSE_naive':RMSE_naive,
+                   'beat_naive':beat_naive,
+                   'train_loss':train_loss,
+                   'test_loss':test_loss,
+                   'next_day_close':next_day_close,
+                   }
     
     progress_counter+= 1
     progress_recorder.set_progress(progress_counter, progress_total,description='Loading Data ...')

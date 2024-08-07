@@ -71,7 +71,7 @@ def split_train_test(data,training_split = 0.8):
     X_train_tensors = torch.reshape(X_train_tensors,   (X_train_tensors.shape[0], 1, X_train_tensors.shape[1]))
     X_test_tensors = torch.reshape(X_test_tensors,  (X_test_tensors.shape[0], 1, X_test_tensors.shape[1])) 
 
-    return X_train_tensors, y_train_tensors, X_test_tensors, y_test_tensors,mm,features_used,num_of_features,X_lagged,y
+    return X_train_tensors, y_train_tensors, X_test_tensors, y_test_tensors,mm,features_used,num_of_features,X_lagged,y,ss
 
 def train(async_data,data,progress_recorder,progress_counter,progress_total,num_epochs):
     torch.manual_seed(1)
@@ -79,7 +79,7 @@ def train(async_data,data,progress_recorder,progress_counter,progress_total,num_
     learning_rate = 0.0001 #0.001 lr
     
     training_split = 0.8
-    X_train, y_train, X_test, y_test,scaler,features_used,num_of_features,x_clean,y_clean = split_train_test(data_stock, training_split = training_split)
+    X_train, y_train, X_test, y_test,scaler,features_used,num_of_features,x_clean,y_clean,data_scaler = split_train_test(data_stock, training_split = training_split)
 
     input_size = num_of_features #number of features
     hidden_size = 50 #number of features in hidden state
@@ -158,10 +158,21 @@ def train(async_data,data,progress_recorder,progress_counter,progress_total,num_
     y_test_unscaled = scaler.inverse_transform(y_test)
     true_pred_close_train = scaler.inverse_transform(train_x_pred)
 
+    lastest_day = data_scaler.transform(data_stock.iloc[[-1]])
+    lastest_day = Variable(torch.Tensor(lastest_day))
+    lastest_day = torch.reshape(lastest_day,   (lastest_day.shape[0], 1, lastest_day.shape[1]))
+    with torch.no_grad():
+        next_day_close = best_model(lastest_day)
+    next_day_close = scaler.inverse_transform(next_day_close)
+    next_day_close = next_day_close.flatten()[0]
+
     print(X_test.shape)
     print(X_test[-1].shape)
     print(X_test[-1])
     RMSE = round(math.sqrt(metrics.mean_squared_error(y_test_unscaled.flatten(), true_pred_close_test.flatten())),5)
+    RMSE_naive = round(math.sqrt(metrics.mean_squared_error(y_test_unscaled.flatten(), list(data_stock['Close'].iloc[:-1])[len(true_pred_close_train):])),5)
+    r_squared = round(metrics.r2_score(y_test_unscaled.flatten(), true_pred_close_test.flatten()), 5)
+    r_squared_naive = round(metrics.r2_score(y_test_unscaled.flatten(), list(data_stock['Close'].iloc[:-1])[len(true_pred_close_train):]), 5)
 
 
     dates = [x.strftime('%d-%m-%Y') for x in data_stock.index]
@@ -174,7 +185,9 @@ def train(async_data,data,progress_recorder,progress_counter,progress_total,num_
 
     corro_features,corrolation_values = calculate_correlations(x_clean,y_clean)
     
-    return dates_train_x_axis, y_axis_close_train, dates_test_x_axis, y_axis_close_test,progress_counter,progress_total,features_used,RMSE,corro_features,corrolation_values
+    return dates_train_x_axis, y_axis_close_train, dates_test_x_axis, y_axis_close_test,progress_counter,progress_total,features_used,RMSE, \
+            corro_features,corrolation_values, dates[1:],r_squared,r_squared_naive,RMSE_naive,round(train_loss_array[-1],5),round(test_loss_array[-1],5), \
+            round(next_day_close,5)
 
 
 def calculate_correlations(x_clean,y_clean):
@@ -186,4 +199,5 @@ def calculate_correlations(x_clean,y_clean):
     features = list(correlations_with_single_var.index)
     corrolation_values = list(correlations_with_single_var.values)
     corrolation_values = [abs(x) for x in corrolation_values]
+    corrolation_values, features = zip(*sorted(list(zip(corrolation_values,features)),reverse=True))
     return features,corrolation_values

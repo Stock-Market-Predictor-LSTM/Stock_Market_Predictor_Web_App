@@ -3,7 +3,8 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0" /> -->
+    <meta name="viewport" content="width=1920">
     <title>Stock Marker Predictor</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -44,31 +45,64 @@
                     <label for="start_date">Start Date:</label>
                     <input type="date" id="start_date" name="start_date" value="{{ form_data.start_date|default_if_none:'' }}" />
                 </div>
-        
+
                 <div class="inputs">
                     <label for="end_date">End Date:</label>
                     <input type="date" id="end_date" name="end_date" value="{{ form_data.end_date|default_if_none:'' }}" />
                 </div>
-        
-                <div class="checkbox-group">
-                    <input type="checkbox" id="26_ema" name="26_ema" value="26_ema" {% if form_data and form_data.26_ema %}checked{% endif %} />
-                    <label for="26_ema">26 EMA</label><br />
-                </div>
-        
-                <div class="checkbox-group">
-                    <input type="checkbox" id="21_ema" name="21_ema" value="21_ema" {% if form_data and form_data.21_ema %}checked{% endif %} />
-                    <label for="21_ema">21 EMA</label><br />
-                </div>
-        
-                <div class="checkbox-group">
-                    <input type="checkbox" id="9_ema" name="9_ema" value="9_ema" {% if form_data and form_data.9_ema %}checked{% endif %} />
-                    <label for="9_ema">9 EMA</label><br />
-                </div>
                 
-                <div class="checkbox-group">
-                    <input type="submit" id="loadButton" value="Load Data" />
-                </div>
+                <p class="feature-selction">Select Features Used For Training:</p>
+                <p class="feature-selction-info">*All Features Use Previous Day Values. The Model Automatically Uses The Previous Day Closing Price as a Feature*</p>
+                <div class="checkboxes">
+                  <div class="checkbox-group">
+                    <input type="checkbox" id="open" name="open" value="open" {% if form_data and form_data.open %}checked{% endif %} />
+                    <label for="open">Open</label><br />
+                  </div>
 
+                  <div class="checkbox-group">
+                    <input type="checkbox" id="high" name="high" value="high" {% if form_data and form_data.high %}checked{% endif %} />
+                    <label for="high">High</label><br />
+                  </div>
+
+                  <div class="checkbox-group">
+                    <input type="checkbox" id="low" name="low" value="low" {% if form_data and form_data.low %}checked{% endif %} />
+                    <label for="low">Low</label><br />
+                  </div>
+
+                  <div class="checkbox-group">
+                    <input type="checkbox" id="adj_close" name="adj_close" value="adj_close" {% if form_data and form_data.adj_close %}checked{% endif %} />
+                    <label for="adj_close">Adj Close</label><br />
+                  </div>
+
+                  <div class="checkbox-group">
+                    <input type="checkbox" id="volume" name="volume" value="volume" {% if form_data and form_data.volume %}checked{% endif %} />
+                    <label for="volume">Volume</label><br />
+                  </div>
+
+                  <div class="checkbox-group">
+                      <input type="checkbox" id="26_ema" name="26_ema" value="26_ema" {% if form_data and form_data.26_ema %}checked{% endif %} />
+                      <label for="26_ema">26 EMA</label><br />
+                  </div>
+          
+                  <div class="checkbox-group">
+                      <input type="checkbox" id="21_ema" name="21_ema" value="21_ema" {% if form_data and form_data.21_ema %}checked{% endif %} />
+                      <label for="21_ema">21 EMA</label><br />
+                  </div>
+          
+                  <div class="checkbox-group">
+                      <input type="checkbox" id="9_ema" name="9_ema" value="9_ema" {% if form_data and form_data.9_ema %}checked{% endif %} />
+                      <label for="9_ema">9 EMA</label><br />
+                  </div>
+
+                  <div class="checkbox-group">
+                    <input type="checkbox" id="macd_signal" name="macd_signal" value="macd_signal" {% if form_data and form_data.macd_signal %}checked{% endif %} />
+                    <label for="macd_signal">MACD/Signal Line</label><br />
+                  </div>
+                  
+              </div>
+              <div class="checkbox-group">
+                <input type="submit" id="loadButton" value="Load Data" />
+              </div>
             </form>
             {% if error_msg != None%}
             <p class="error_form">{{error_msg}}</p>
@@ -86,12 +120,50 @@
           <div class="ml-panel">
             <h2 class = 'model-info'>Model Information</h2>
             <div class="ml-info">
-              <p id="display">Model Type:</p>
-              <p id="model_type" class = 'outputs'>(Waiting For Data)</p>
+              <div class="info-rows">
+                <div class="info-container">
+                  <p id="display">Model Type:</p>
+                  <p id="model_type" class = 'outputs'>(Waiting For Data)</p>
+                </div>
+                <div class="info-container">
+                  <p id="display">Test Loss:</p>
+                  <p id="test_loss" class = 'outputs'>(Waiting For Data)</p>
+                </div>
+              </div>
+              <div class="info-rows">
+                <div class="info-container">
+                  <p id="display">RMSE:</p>
+                  <p id="RMSE" class = 'outputs'>(Waiting For Data)</p>
+                </div>
+                <div class="info-container">
+                  <p id="display">r<sup>2</sup> (Naive Model):</p>
+                  <p id="r_2_naive" class = 'outputs'>(Waiting For Data)</p>
+                </div>
+              </div>
+              <div class="info-rows">
+                <div class="info-container">
+                  <p id="display">r<sup>2</sup>:</p>
+                  <p id="r_2" class = 'outputs'>(Waiting For Data)</p>
+                </div>
+                <div class="info-container">
+                  <p id="display">RMSE (Naive Model):</p>
+                  <p id="naive_model_RMSE" class = 'outputs'>(Waiting For Data)</p>
+                </div>
+              </div>
+              <div class="info-rows">
+                <div class="info-container">
+                  <p id="display">Train Loss:</p>
+                  <p id="train_loss" class = 'outputs'>(Waiting For Data)</p> 
+                </div>
+                <div class="info-container">
+                  <p id="display">Beat Naive Model?</p>
+                  <p id="naive_model_beat" class = 'outputs'>(Waiting For Data)</p>
+                </div>
+              </div>
+            </div>
+            <div class="info-container-full">
               <p id="display">Features Used For Training:</p>
               <p id="features_used" class = 'outputs'>(Waiting For Data)</p>
-              <p id="display">RMSE:</p>
-              <p id="RMSE" class = 'outputs'>(Waiting For Data)</p>
               <p id="display">Next Trading Day Predicted Closed Price:</p>
               <p id="next_predicted_close" class = 'outputs'>(Waiting For Data)</p>
             </div>
@@ -99,13 +171,28 @@
         </div>
         <div class="graphs">
           <div class="price_chart">
-            <canvas id="price_graph"></canvas>
+            <div class="chart_button price-btn-div">
+              <button type="button" id = "resetZoomButtonPrice">Reset Zoom</button>
+            </div>
+            <div class="price-container">
+              <canvas id="price_graph"></canvas>
+            </div>
           </div>
           <div class="volume_chart">
-            <canvas id="volume_graph" ></canvas>
+            <div class="chart_button volume-btn-div">
+              <button type="button" id = "resetZoomButtonVolume">Reset Zoom</button>
+            </div>
+            <div class="volume-container">
+              <canvas id="volume_graph" ></canvas>
+            </div>
           </div>
-          <div class="macd_chart">
-            <canvas id="macd_graph"></canvas>
+          <div class="corrolation_chart">
+            <div class="chart_button corro-btn-div">
+              <button type="button" id = "resetZoomButtonCorro">Reset Zoom</button>
+            </div>
+            <div class="corro-container">
+              <canvas id="corrolation_graph"></canvas>
+            </div>
           </div>
         </div>
         <div class="right-panel">
@@ -125,7 +212,7 @@
                   <p id="date_news_1">Date</p>
                 </div>
                 <div class = "news-input">
-                  <p id="news_input_1">News text here Apple </p>
+                  <p id="news_input_1">(Waiting For Data)</p>
                 </div>
               </div>
             
@@ -134,7 +221,7 @@
                   <p id="date_news_2">Date</p>
                 </div>
                 <div class = "news-input" >
-                  <p id="news_input_2">News text here Apple is crazy Woah!eg erg erg erger </p>
+                  <p id="news_input_2">(Waiting For Data)</p>
                 </div>
               </div>
             
@@ -144,7 +231,7 @@
                   <p id="date_news_3">Date</p>
                 </div>
                 <div class = "news-input" >
-                  <p id="news_input_3">News text here Apple is crazy Woah!eg erg erg erger gwerge </p>
+                  <p id="news_input_3">(Waiting For Data)</p>
                 </div>
               </div>
             
@@ -154,7 +241,7 @@
                   <p id="date_news_4">Date</p>
                 </div>
                 <div class = "news-input" >
-                  <p id="news_input_4">News text here Apple is crazy Woah!eg erg erg erger gwerge gwrge rger gerg erg erg erger ger ger gwerg erg erger gwergerg erg erge gerg erg erg </p>
+                  <p id="news_input_4">(Waiting For Data)</p>
                 </div>
               </div>
             
@@ -164,7 +251,7 @@
                   <p id="date_news_5">Date</p>
                 </div>
                 <div class = "news-input" >
-                  <p id="news_input_5">News text here Apple is crazy Woah!eg erg erg erger</p>
+                  <p id="news_input_5">(Waiting For Data)</p>
                 </div>
               </div>
 
@@ -173,7 +260,7 @@
                   <p id="date_news_6">Date</p>
                 </div>
                 <div class = "news-input" >
-                  <p id="news_input_6">News text here Apple is crazy Woah!eg erg erg erger</p>
+                  <p id="news_input_6">(Waiting For Data)</p>
                 </div>
               </div>
 
@@ -182,7 +269,7 @@
                   <p id="date_news_7">Date</p>
                 </div>
                 <div class = "news-input" >
-                  <p id="news_input_7">News text here Apple is crazy Woah!eg</p>
+                  <p id="news_input_7">(Waiting For Data)</p>
                 </div>
               </div>
 
@@ -191,14 +278,14 @@
                   <p id="date_news_8">Date</p>
                 </div>
                 <div class = "news-input" >
-                  <p id="news_input_8">News text here Apple is crazy Woah!eg erg erg erger gwerge gwrge rger gerg erg erg erger ger ger gwerg erg erger gwergerg erg erge gerg erg erg </p>
+                  <p id="news_input_8">(Waiting For Data)</p>
                 </div>
               </div>
               
             </div>
           </div>
-          <div class="corrolation_chart">
-            <canvas id="corrolation_graph"></canvas>
+          <div class="info">
+            <h2 class="info-header">How To Use</h2>
           </div>
         </div>
       </div>
@@ -209,6 +296,7 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@1.1.1"></script>
+  <script src="{% static 'celery_progress/update_features.js' %}"></script>
   <script src="{% static 'celery_progress/celery_progress.js' %}"></script>
   <script>
 
@@ -219,6 +307,18 @@
     abortBtn.addEventListener('click', function() {
       window.location.href ="{% url 'abort' %}";
       abortBtn.style.display = 'none';
+    });
+
+    document.getElementById("resetZoomButtonCorro").addEventListener("click", function() {
+      window.corroChart.resetZoom();
+    });
+
+    document.getElementById("resetZoomButtonPrice").addEventListener("click", function() {
+      window.priceChart.resetZoom();
+    });
+
+    document.getElementById("resetZoomButtonVolume").addEventListener("click", function() {
+      window.volumeChart.resetZoom();
     });
 
 
