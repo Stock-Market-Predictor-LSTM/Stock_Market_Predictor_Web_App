@@ -194,7 +194,7 @@ header nav a.back_to_projects {
   flex-direction: column;
 }
 
-.graphs .price_chart,
+.price_chart,
 .volume_chart,
 .corrolation_chart {
   width: 100%;
@@ -215,6 +215,12 @@ header nav a.back_to_projects {
   padding: 2px 5px;
   font-size: 0.7em;
   font-weight: bold;
+  display: none;
+}
+
+#resetZoomButtonPrice,
+#resetZoomButtonCorro,
+#resetZoomButtonVolume {
   display: none;
 }
 
