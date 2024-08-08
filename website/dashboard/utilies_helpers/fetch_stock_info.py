@@ -37,6 +37,14 @@ def get_close_price(self,data):
         data_stock['21 EMA'] = data_stock['Close'].ewm(span=21, adjust=False).mean()
     if '9_ema' in data:
         data_stock['9 EMA'] = data_stock['Close'].ewm(span=9, adjust=False).mean()
+    if 'bollinger_bands' in data:
+        data_stock['SMA20'] = data_stock['Close'].rolling(window=20).mean()
+        data_stock['SD20'] = data_stock['Close'].rolling(window=20).std()
+        data_stock['Upper Bollinger Band'] = data_stock['SMA20'] + 2 * data_stock['SD20']
+        data_stock['Lower Bollinger Band'] = data_stock['SMA20'] - 2 * data_stock['SD20']
+        data_stock = data_stock.drop(columns = ['SMA20','SD20'])
+    if 'SMA20' in data:
+        data_stock['20 SMA'] = data_stock['Close'].rolling(window=20).mean()
     if 'high' not in data:
         data_stock = data_stock.drop(columns = ['High'])
     if 'low' not in data:
@@ -47,7 +55,7 @@ def get_close_price(self,data):
     data_stock = data_stock.dropna()
     volume = list(data_stock['Volume'])
     open = list(data_stock['Open'])
-    
+
     if 'volume' not in data:
         data_stock = data_stock.drop(columns = ['Volume'])
     if 'open' not in data:
@@ -57,7 +65,7 @@ def get_close_price(self,data):
 
     x_axis_close_train, y_axis_close_train, x_axis_close_test, y_axis_close_test, c, t, \
     features_used, RMSE, corro_features, corrolation_values, naive_dates,r_squared,r_squared_naive, \
-    RMSE_naive,train_loss,test_loss,next_day_close = \
+    RMSE_naive,train_loss,test_loss,next_day_close,train_array,test_array = \
     train_model.train(self, data_stock, progress_recorder, progress_counter, progress_total, epochs)
 
     beat_naive = RMSE < RMSE_naive
@@ -98,6 +106,8 @@ def get_close_price(self,data):
                    'train_loss':train_loss,
                    'test_loss':test_loss,
                    'next_day_close':next_day_close,
+                   'train_array':train_array,
+                   'test_array':test_array,
                    }
     
     progress_counter+= 1

@@ -187,7 +187,7 @@ def train(async_data,data,progress_recorder,progress_counter,progress_total,num_
     
     return dates_train_x_axis, y_axis_close_train, dates_test_x_axis, y_axis_close_test,progress_counter,progress_total,features_used,RMSE, \
             corro_features,corrolation_values, dates[1:],r_squared,r_squared_naive,RMSE_naive,round(train_loss_array[-1],5),round(test_loss_array[-1],5), \
-            round(next_day_close,5)
+            round(next_day_close,5),train_loss_array,test_loss_array
 
 
 def calculate_correlations(x_clean,y_clean):

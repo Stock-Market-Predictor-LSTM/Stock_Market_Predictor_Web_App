@@ -95,8 +95,18 @@
                   </div>
 
                   <div class="checkbox-group">
+                    <input type="checkbox" id="SMA20" name="SMA20" value="SMA20" {% if form_data and form_data.SMA20 %}checked{% endif %} />
+                    <label for="SMA20">20 SMA</label><br />
+                  </div>
+
+                  <div class="checkbox-group">
                     <input type="checkbox" id="macd_signal" name="macd_signal" value="macd_signal" {% if form_data and form_data.macd_signal %}checked{% endif %} />
                     <label for="macd_signal">MACD/Signal Line</label><br />
+                  </div>
+
+                  <div class="checkbox-group">
+                    <input type="checkbox" id="bollinger_bands" name="bollinger_bands" value="bollinger_bands" {% if form_data and form_data.bollinger_bands %}checked{% endif %} />
+                    <label for="bollinger_bands">Upper/Lower Bollinger Bands</label><br />
                   </div>
                   
               </div>
@@ -284,8 +294,47 @@
               
             </div>
           </div>
+          <div class="train_loss_chart">
+            <div class="chart_button train-loss-btn-div">
+              <input  type="button" id = "resetZoomButtonTrainLoss" value="Reset Zoom"/>
+            </div>
+            <div class="train-loss-container">
+              <canvas id="train_loss_graph"></canvas>
+            </div>
+          </div>
           <div class="info">
-            <h2 class="info-header">How To Use</h2>
+            <div id="how-to-use" class="section">
+                <h2>How to Use</h2>
+                <p>Use the dashboard to predict stock prices by:</p>
+                <ul>
+                    <li>Choosing a stock ticker.</li>
+                    <li>Selecting a timeframe (at least one month).</li>
+                    <li>Picking features for the model.</li>
+                    <li>Pressing "Load Data".</li>
+                </ul>
+                <p>Your queue position is shown in the navigation bar if another user is currently loading data.</p>
+            </div>
+    
+            <div id="insights" class="section">
+                <h2>Insights</h2>
+                <p>Our analysis shows:</p>
+                <ul>
+                    <li>LSTM models are not more accurate than naive models (previous day's closing price) for long time periods, but can perform better for short time periods.</li>
+                    <li>Price-related data alone is insufficient for accurate predictions, supporting the Efficient Market Hypothesis. (Sentiment isn't used in the LSTM due to resource issues and is shown to display my entity sentiment model.)</li>
+                    <li>Many correlated features do not enhance prediction accuracy.</li>
+                </ul>
+                <p>More information, along with further insights about this project can be found at <a class ='title' href="https://ganels.com/stock-market-predictor-using-machine-learning/">Stock Market Predictor</a></p>
+            </div>
+    
+            <div id="future-plans" class="section">
+                <h2>Future Plans</h2>
+                <p>Planned enhancements include:</p>
+                <ul>
+                    <li>Integrating unrestricted historical news data.</li>
+                    <li>Improving headline scraping efficiency.</li>
+                    <li>Refining the sentiment analysis model, currently at 92% accuracy with a fine-tuned BERT model.</li>
+                </ul>
+            </div>
           </div>
         </div>
       </div>
@@ -321,6 +370,9 @@
       window.volumeChart.resetZoom();
     });
 
+    document.getElementById("resetZoomButtonTrainLoss").addEventListener("click", function() {
+      window.train_loss_chart.resetZoom();
+    });
 
     document.addEventListener("DOMContentLoaded", function () {
       if (taskId) {

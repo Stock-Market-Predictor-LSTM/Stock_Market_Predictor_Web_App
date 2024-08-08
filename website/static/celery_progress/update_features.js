@@ -3,6 +3,7 @@ function updateFeatures(myDict) {
   document.getElementById("resetZoomButtonCorro").style.display = "block";
   document.getElementById("resetZoomButtonPrice").style.display = "block";
   document.getElementById("resetZoomButtonVolume").style.display = "block";
+  document.getElementById("resetZoomButtonTrainLoss").style.display = "block";
   document.getElementById("abort").style.display = "none";
 
   document.getElementById("model_type").textContent = myDict.model_type;
@@ -24,7 +25,6 @@ function updateFeatures(myDict) {
     document.getElementById("naive_model_beat").style.color = "red";
   }
   document.getElementById("naive_model_beat").style.fontWeight = "bold";
-  let ctx_price = document.getElementById("price_graph").getContext("2d");
 
   const news_inputs = [
     document.getElementById("news_input_1"),
@@ -63,6 +63,7 @@ function updateFeatures(myDict) {
     }
   }
 
+  let ctx_price = document.getElementById("price_graph").getContext("2d");
   window.priceChart = new Chart(ctx_price, {
     type: "line", // or any other type of chart
     data: {
@@ -140,6 +141,24 @@ function updateFeatures(myDict) {
           pan: {
             enabled: true, // Enable panning
             mode: "xy", // Allow panning in both directions
+          },
+        },
+        legend: {
+          display: true,
+          position: "chartArea", // Position inside the chart area
+          align: "start", // Align to the start of the chart area
+          labels: {
+            usePointStyle: true, // Use point styles
+            font: {
+              size: 10, // Adjust the font size
+            },
+            boxWidth: 20, // Adjust the box width
+            padding: 10, // Adjust the padding
+          },
+          layout: {
+            padding: {
+              top: 5,
+            },
           },
         },
       },
@@ -269,6 +288,84 @@ function updateFeatures(myDict) {
             font: {
               size: 12, // Set this to the desired font size for the x-axis labels
             },
+          },
+        },
+      },
+    },
+  });
+
+  let ctx_train_loss = document
+    .getElementById("train_loss_graph")
+    .getContext("2d");
+  window.train_loss_chart = new Chart(ctx_train_loss, {
+    type: "line", // or any other type of chart
+    data: {
+      labels: myDict.train_array.map((_, index) => index),
+      datasets: [
+        {
+          label: "Train Loss",
+          data: myDict.train_array,
+          borderColor: "rgba(75, 192, 192, 1)",
+          backgroundColor: "rgba(75, 192, 192, 0.2)",
+          showLine: true,
+        },
+        {
+          label: "Test Loss",
+          data: myDict.test_array,
+          borderColor: "rgba(255, 99, 132, 1)",
+          backgroundColor: "rgba(255, 99, 132, 0.2)",
+          showLine: true,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: {
+          ticks: {
+            title: {
+              display: true,
+              text: "Epoch",
+            },
+            font: {
+              size: 8, // Set this to the desired font size for the x-axis labels
+            },
+          },
+        },
+      },
+      plugins: {
+        zoom: {
+          zoom: {
+            wheel: {
+              enabled: true, // Enable zooming with the mouse wheel
+            },
+            pinch: {
+              enabled: true, // Enable zooming with pinch gestures
+            },
+            mode: "xy", // Allow zooming in both directions
+          },
+          pan: {
+            enabled: true, // Enable panning
+            mode: "xy", // Allow panning in both directions
+          },
+        },
+        legend: {
+          display: true,
+          position: "chartArea", // Position inside the chart area
+          align: "end", // Align to the start of the chart area
+          labels: {
+            usePointStyle: true, // Use point styles
+            font: {
+              size: 12, // Adjust the font size
+            },
+            boxWidth: 20, // Adjust the box width
+            padding: 10, // Adjust the padding
+          },
+        },
+        layout: {
+          padding: {
+            top: 5,
           },
         },
       },

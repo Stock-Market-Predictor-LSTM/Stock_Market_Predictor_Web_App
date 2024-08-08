@@ -160,9 +160,12 @@ header nav a.back_to_projects {
   box-sizing: border-box;
   position: relative;
   margin: auto;
+  text-align: center;
 }
 
 .panel {
+  position: relative;
+  height: 60%;
   width: 100%;
   background-color: white;
   box-sizing: border-box;
@@ -178,6 +181,9 @@ header nav a.back_to_projects {
 }
 
 .leftpanel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
   width: 25%;
   height: calc(100vh - 3em);
   box-sizing: border-box;
@@ -207,7 +213,7 @@ header nav a.back_to_projects {
 
 .chart_button input {
   position: relative;
-  top: -3px;
+  top: 0px;
   left: 50%;
   transform: translateX(-50%);
   background-color: white;
@@ -327,6 +333,8 @@ nav p {
 }
 
 .ml-panel {
+  position: relative;
+  height: 40%;
   width: 100%;
   border-radius: 10px;
   background-color: white;
@@ -347,6 +355,8 @@ nav p {
 
 .ml-panel h2 {
   margin: 0 0 0 0;
+  padding-bottom: 20px;
+  text-align: center;
 }
 
 .ml-panel p {
@@ -390,10 +400,13 @@ nav p {
 }
 
 .right-panel {
+  position: relative;
   width: 50%;
   box-sizing: border-box;
-  padding: 20px 10px 10px 10px;
+  padding: 10px 10px 10px 10px;
   height: calc(100vh - 3em);
+  display: flex;
+  flex-direction: column;
 }
 
 .news {
@@ -415,6 +428,7 @@ nav p {
   box-sizing: border-box;
   font-weight: bold;
   text-align: center;
+  font-size: 0.8em;
   margin: 0px;
   padding: 5px 5px 5px 5px;
 }
@@ -427,7 +441,7 @@ nav p {
 .news-item {
   display: flex;
   color: white;
-  font-size: 0.8em;
+  font-size: 0.7em;
   font-weight: bold;
   padding-top: 5px;
   padding-bottom: 5px;
@@ -480,4 +494,172 @@ nav p {
 
 .info {
   background-color: white;
+  padding: 5px;
+  margin-top: 10px;
+  box-sizing: border-box;
+  height: auto;
+}
+
+.section h2 {
+  border-bottom: 2px solid #757575;
+  margin: 0;
+  padding-top: 5px;
+  padding-bottom: 2px;
+  font-size: 0.8em;
+}
+
+.section p,
+ul {
+  font-size: 0.7em;
+  margin: 0;
+}
+
+.train_loss_chart {
+  position: relative;
+  margin-top: 10px;
+  background-color: white;
+  height: 10%;
+  box-sizing: border-box;
+  padding: 5px;
+  flex: 3;
+}
+
+.train-loss-container {
+  height: 90%;
+  flex: 3;
+}
+
+.chart_button.train-loss-btn-div {
+  height: 10%;
+  flex: 3;
+}
+
+#train_loss_graph {
+  width: 100%;
+  flex: 3;
+  height: 90%;
+}
+
+@media only screen and (max-width: 1660px) {
+  form label,
+  form select,
+  form input[type="date"],
+  form input[type="checkbox"],
+  .feature-selction-info {
+    font-size: 0.7em;
+  }
+
+  form input[type="submit"],
+  .feature-selction {
+    font-size: 0.9em;
+  }
+
+  #progress-bar-message,
+  error_form {
+    font-size: 0.9em;
+  }
+
+  .model-info {
+    font-size: 1.5em;
+  }
+
+  .ml-info,
+  .info-container-full {
+    font-size: 0.8em;
+  }
+
+  .info p,
+  ul {
+    font-size: 0.6em;
+  }
+
+  .news-wrapper p {
+    font-size: 0.9em;
+  }
+}
+
+@media only screen and (max-width: 1320px) {
+  header nav a.title {
+    font-size: 1.5em;
+  }
+
+  form label,
+  form select,
+  form input[type="date"],
+  form input[type="checkbox"],
+  .feature-selction-info {
+    font-size: 0.7em;
+  }
+
+  form input[type="submit"],
+  .feature-selction,
+  #abort {
+    font-size: 0.7em;
+  }
+
+  #progress-bar-message,
+  .error_form {
+    font-size: 0.7em;
+  }
+
+  .model-info {
+    font-size: 1.5em;
+  }
+
+  .ml-info,
+  .info-container-full {
+    font-size: 0.8em;
+  }
+
+  .info p,
+  ul {
+    font-size: 0.6em;
+  }
+
+  .news-wrapper p {
+    font-size: 0.7em;
+  }
+}
+
+@media only screen and (max-width: 1200px) {
+  header nav a.title {
+    font-size: 1.5em;
+  }
+
+  form label,
+  form select,
+  form input[type="date"],
+  form input[type="checkbox"],
+  .feature-selction-info {
+    font-size: 0.6em;
+  }
+
+  form input[type="submit"],
+  .feature-selction,
+  #abort {
+    font-size: 0.6em;
+  }
+
+  #progress-bar-message,
+  .error_form {
+    font-size: 0.6em;
+  }
+
+  .model-info {
+    font-size: 1.1em;
+  }
+
+  .ml-info,
+  .info-container-full {
+    font-size: 0.7em;
+  }
+
+  .info p,
+  ul {
+    font-size: 0.5em;
+  }
+
+  .news-wrapper p {
+    font-size: 0.6em;
+  }
 }
