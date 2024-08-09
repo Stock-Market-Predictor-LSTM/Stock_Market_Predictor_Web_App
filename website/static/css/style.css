@@ -13,11 +13,12 @@ header {
 .wrapper {
   display: flex;
   flex-direction: row; /* Ensure flex direction is row to place leftpanel and graphs side by side */
-  background: linear-gradient(
+  /* background: linear-gradient(
     180deg,
     rgba(0, 0, 0, 1) 20%,
     rgba(0, 112, 255, 1) 100%
-  );
+  ); */
+  background-color: black;
 }
 
 form label,
@@ -36,6 +37,11 @@ form input[type="submit"] {
   display: block;
   margin-top: 5px;
   margin-bottom: 5px;
+}
+
+.checkbox-group.news-check {
+  font-size: 0.7em;
+  margin: 0;
 }
 
 form input[type="checkbox"] {
@@ -88,13 +94,14 @@ form select {
   font-weight: bold;
   font-size: 0.9em;
   text-align: center;
+  margin: 0;
 }
 
 .checkboxes {
   display: flex;
   flex-wrap: wrap;
   width: 100%;
-  font-size: 0.8em;
+  font-size: 0.7em;
   justify-content: center;
 }
 
@@ -171,7 +178,6 @@ header nav a.back_to_projects {
   box-sizing: border-box;
   padding-top: 40px;
   position: relative;
-  margin-top: 10px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -207,7 +213,7 @@ header nav a.back_to_projects {
   box-sizing: border-box;
   padding: 5px 5px 5px 5px;
   position: relative;
-  background-color: rgb(255, 255, 255);
+  background-color: rgb(0, 0, 0);
   min-height: 0;
 }
 
@@ -216,18 +222,19 @@ header nav a.back_to_projects {
   top: 0px;
   left: 50%;
   transform: translateX(-50%);
-  background-color: white;
-  border: 1px solid #ccc;
+  background-color: #3b3b3b;
+  color: white;
+  border: 1px solid #5c5c5c;
   padding: 2px 5px;
   font-size: 0.7em;
   font-weight: bold;
-  display: none;
+  display: block;
 }
 
 #resetZoomButtonPrice,
 #resetZoomButtonCorro,
 #resetZoomButtonVolume {
-  display: none;
+  display: block;
 }
 
 .chart_button.price-btn-div {
@@ -268,7 +275,6 @@ header nav a.back_to_projects {
 
 .price_chart {
   height: 40%;
-  margin-top: 10px;
 }
 
 .volume_chart {
@@ -336,7 +342,6 @@ nav p {
   position: relative;
   height: 40%;
   width: 100%;
-  border-radius: 10px;
   background-color: white;
   box-sizing: border-box;
   padding-top: 20px;
@@ -442,7 +447,6 @@ nav p {
   display: flex;
   color: white;
   font-size: 0.7em;
-  font-weight: bold;
   padding-top: 5px;
   padding-bottom: 5px;
 }
@@ -477,7 +481,7 @@ nav p {
   padding-left: 5px;
   padding-right: 5px;
   box-sizing: border-box;
-  font-size: 0.7em;
+  font-size: 0.75em;
 }
 
 .positive_sent {
@@ -489,35 +493,55 @@ nav p {
 }
 
 .negative_sent {
-  color: red;
+  color: #ff7066;
+}
+
+.news-warning {
+  margin: 0;
+  color: white;
+  font-size: 0.75em;
 }
 
 .info {
-  background-color: white;
+  background-color: black;
   padding: 5px;
   margin-top: 10px;
   box-sizing: border-box;
   height: auto;
+  border-color: white;
+  border-style: solid;
+  border-width: 2px;
+  border-radius: 10px;
 }
 
 .section h2 {
-  border-bottom: 2px solid #757575;
+  border-top: 2px solid #3b3b3b;
   margin: 0;
-  padding-top: 5px;
+  padding-top: 2px;
   padding-bottom: 2px;
   font-size: 0.8em;
+  color: white;
+}
+
+.section.top h2 {
+  border-top: 0px solid #3b3b3b;
 }
 
 .section p,
 ul {
-  font-size: 0.7em;
+  font-size: 0.65em;
   margin: 0;
+  color: white;
+}
+
+.section a {
+  color: white;
 }
 
 .train_loss_chart {
   position: relative;
   margin-top: 10px;
-  background-color: white;
+  background-color: "black";
   height: 10%;
   box-sizing: border-box;
   padding: 5px;
@@ -555,7 +579,7 @@ ul {
   }
 
   #progress-bar-message,
-  error_form {
+  .error_form {
     font-size: 0.9em;
   }
 
@@ -578,7 +602,7 @@ ul {
   }
 }
 
-@media only screen and (max-width: 1320px) {
+@media only screen and (max-width: 1670px) {
   header nav a.title {
     font-size: 1.5em;
   }
@@ -621,7 +645,7 @@ ul {
   }
 }
 
-@media only screen and (max-width: 1200px) {
+@media only screen and (max-width: 1220px) {
   header nav a.title {
     font-size: 1.5em;
   }
@@ -631,7 +655,7 @@ ul {
   form input[type="date"],
   form input[type="checkbox"],
   .feature-selction-info {
-    font-size: 0.6em;
+    font-size: 0.5em;
   }
 
   form input[type="submit"],
@@ -642,7 +666,7 @@ ul {
 
   #progress-bar-message,
   .error_form {
-    font-size: 0.6em;
+    font-size: 0.5em;
   }
 
   .model-info {
@@ -651,7 +675,7 @@ ul {
 
   .ml-info,
   .info-container-full {
-    font-size: 0.7em;
+    font-size: 0.5em;
   }
 
   .info p,

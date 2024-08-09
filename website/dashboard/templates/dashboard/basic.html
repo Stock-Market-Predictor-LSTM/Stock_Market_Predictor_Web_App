@@ -50,6 +50,11 @@
                     <label for="end_date">End Date:</label>
                     <input type="date" id="end_date" name="end_date" value="{{ form_data.end_date|default_if_none:'' }}" />
                 </div>
+
+                <div class="checkbox-group news-check">
+                  <input type="checkbox" id="news_check" name="news_check" value="news_check" {% if form_data and form_data.news_check %}checked{% endif %} />
+                  <label for="news_check", class = 'news-check'>Load Recent News?</label><br />
+                </div>
                 
                 <p class="feature-selction">Select Features Used For Training:</p>
                 <p class="feature-selction-info">*All Features Use Previous Day Values. The Model Automatically Uses The Previous Day Closing Price as a Feature*</p>
@@ -100,13 +105,23 @@
                   </div>
 
                   <div class="checkbox-group">
-                    <input type="checkbox" id="macd_signal" name="macd_signal" value="macd_signal" {% if form_data and form_data.macd_signal %}checked{% endif %} />
-                    <label for="macd_signal">MACD/Signal Line</label><br />
+                    <input type="checkbox" id="macd" name="macd" value="macd" {% if form_data and form_data.macd %}checked{% endif %} />
+                    <label for="macd">MACD</label><br />
                   </div>
 
                   <div class="checkbox-group">
-                    <input type="checkbox" id="bollinger_bands" name="bollinger_bands" value="bollinger_bands" {% if form_data and form_data.bollinger_bands %}checked{% endif %} />
-                    <label for="bollinger_bands">Upper/Lower Bollinger Bands</label><br />
+                    <input type="checkbox" id="signal" name="signal" value="signal" {% if form_data and form_data.signal %}checked{% endif %} />
+                    <label for="signal">Signal Line</label><br />
+                  </div>
+
+                  <div class="checkbox-group">
+                    <input type="checkbox" id="upper_bollinger_bands" name="upper_bollinger_bands" value="upper_bollinger_bands" {% if form_data and form_data.upper_bollinger_bands %}checked{% endif %} />
+                    <label for="upper_bollinger_bands">Upper Bollinger Bands</label><br />
+                  </div>
+
+                  <div class="checkbox-group">
+                    <input type="checkbox" id="lower_bollinger_bands" name="lower_bollinger_bands" value="lower_bollinger_bands" {% if form_data and form_data.lower_bollinger_bands %}checked{% endif %} />
+                    <label for="lower_bollinger_bands">Lower Bollinger Bands</label><br />
                   </div>
                   
               </div>
@@ -213,6 +228,7 @@
                 <p class = 'positive_sent'>Positive Sentiment</p>
                 <p class = 'neutral_sent'>Neutral Sentiment</p>
                 <p class = 'negative_sent'>Negative Sentiment</p>
+                <p class = 'news-warning'>*Sentiment can sometimes be classifed incorrectly (≈ 92% accuracy)*</p>
               </div>
             </div>
             <div class="news-wrapper">
@@ -303,7 +319,7 @@
             </div>
           </div>
           <div class="info">
-            <div id="how-to-use" class="section">
+            <div id="how-to-use" class="section top">
                 <h2>How to Use</h2>
                 <p>Use the dashboard to predict stock prices by:</p>
                 <ul>
@@ -319,7 +335,7 @@
                 <h2>Insights</h2>
                 <p>Our analysis shows:</p>
                 <ul>
-                    <li>LSTM models are not more accurate than naive models (previous day's closing price) for long time periods, but can perform better for short time periods.</li>
+                    <li>LSTM models are not more accurate than naive models (previous day's closing price).li>
                     <li>Price-related data alone is insufficient for accurate predictions, supporting the Efficient Market Hypothesis. (Sentiment isn't used in the LSTM due to resource issues and is shown to display my entity sentiment model.)</li>
                     <li>Many correlated features do not enhance prediction accuracy.</li>
                 </ul>
@@ -347,6 +363,7 @@
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@1.1.1"></script>
   <script src="{% static 'celery_progress/update_features.js' %}"></script>
   <script src="{% static 'celery_progress/celery_progress.js' %}"></script>
+  <script src="{% static 'celery_progress/create_graphs.js' %}"></script>
   <script>
 
     const loadDataBtn = document.getElementById('loadButton');

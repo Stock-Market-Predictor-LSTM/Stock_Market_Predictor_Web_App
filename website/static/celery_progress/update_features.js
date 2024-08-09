@@ -59,8 +59,33 @@ function updateFeatures(myDict) {
     } else if (myDict.news_sentiments[i] == 1) {
       news_inputs[i].style.color = "#90EE90";
     } else if (myDict.news_sentiments[i] == -1) {
-      news_inputs[i].style.color = "red";
+      news_inputs[i].style.color = "#ff7066";
     }
+  }
+
+  const plugin = {
+    id: "customCanvasBackgroundColor",
+    beforeDraw: (chart, args, options) => {
+      const { ctx } = chart;
+      ctx.save();
+      ctx.globalCompositeOperation = "destination-over";
+      ctx.fillStyle = options.color || "#99ffff";
+      ctx.fillRect(0, 0, chart.width, chart.height);
+      ctx.restore();
+    },
+  };
+
+  if (window.priceChart) {
+    window.priceChart.destroy();
+  }
+  if (window.volumeChart) {
+    window.volumeChart.destroy();
+  }
+  if (window.corroChart) {
+    window.corroChart.destroy();
+  }
+  if (window.train_loss_chart) {
+    window.train_loss_chart.destroy();
   }
 
   let ctx_price = document.getElementById("price_graph").getContext("2d");
@@ -120,14 +145,29 @@ function updateFeatures(myDict) {
       maintainAspectRatio: false,
       scales: {
         x: {
+          grid: {
+            color: "#3b3b3b",
+          },
           ticks: {
             font: {
               size: 8, // Set this to the desired font size for the x-axis labels
             },
+            color: "white",
+          },
+        },
+        y: {
+          grid: {
+            color: "#3b3b3b",
+          },
+          ticks: {
+            color: "white",
           },
         },
       },
       plugins: {
+        customCanvasBackgroundColor: {
+          color: "black",
+        },
         zoom: {
           zoom: {
             wheel: {
@@ -148,9 +188,10 @@ function updateFeatures(myDict) {
           position: "chartArea", // Position inside the chart area
           align: "start", // Align to the start of the chart area
           labels: {
+            color: "white",
             usePointStyle: true, // Use point styles
             font: {
-              size: 10, // Adjust the font size
+              size: 12, // Adjust the font size
             },
             boxWidth: 20, // Adjust the box width
             padding: 10, // Adjust the padding
@@ -163,6 +204,7 @@ function updateFeatures(myDict) {
         },
       },
     },
+    plugins: [plugin],
   });
 
   const barColors = myDict.close_prices.map((close, index) => {
@@ -183,6 +225,18 @@ function updateFeatures(myDict) {
       ],
     },
     options: {
+      tooltips: {
+        callbacks: {
+          label: function (tooltipItem, data) {
+            // Customize tooltip label to show 5 decimal places
+            return (
+              data.datasets[tooltipItem.datasetIndex].label +
+              ": " +
+              tooltipItem.yLabel.toFixed(5)
+            );
+          },
+        },
+      },
       plugins: {
         title: {
           display: true,
@@ -190,6 +244,7 @@ function updateFeatures(myDict) {
           font: {
             size: 12,
           },
+          color: "white",
         },
         legend: {
           display: false,
@@ -215,12 +270,25 @@ function updateFeatures(myDict) {
       scales: {
         y: {
           beginAtZero: true,
+          grid: {
+            color: "#3b3b3b",
+          },
+          ticks: {
+            font: {
+              size: 10, // Set this to the desired font size for the x-axis labels
+            },
+            color: "white",
+          },
         },
         x: {
+          grid: {
+            color: "#3b3b3b",
+          },
           ticks: {
             font: {
               size: 8, // Set this to the desired font size for the x-axis labels
             },
+            color: "white",
           },
         },
       },
@@ -257,6 +325,7 @@ function updateFeatures(myDict) {
           font: {
             size: 12,
           },
+          color: "white",
         },
         legend: {
           display: false,
@@ -282,12 +351,22 @@ function updateFeatures(myDict) {
       scales: {
         y: {
           beginAtZero: true,
+          grid: {
+            color: "#3b3b3b",
+          },
+          ticks: {
+            color: "white",
+          },
         },
         x: {
+          grid: {
+            color: "#3b3b3b",
+          },
           ticks: {
             font: {
               size: 12, // Set this to the desired font size for the x-axis labels
             },
+            color: "white",
           },
         },
       },
@@ -323,6 +402,9 @@ function updateFeatures(myDict) {
       maintainAspectRatio: false,
       scales: {
         x: {
+          grid: {
+            color: "#3b3b3b",
+          },
           ticks: {
             title: {
               display: true,
@@ -331,6 +413,20 @@ function updateFeatures(myDict) {
             font: {
               size: 8, // Set this to the desired font size for the x-axis labels
             },
+            color: "white",
+          },
+        },
+        y: {
+          max:
+            Math.max(
+              Math.max(...myDict.test_array),
+              Math.max(...myDict.train_array)
+            ) + 0.3,
+          grid: {
+            color: "#3b3b3b",
+          },
+          ticks: {
+            color: "white",
           },
         },
       },
@@ -353,11 +449,12 @@ function updateFeatures(myDict) {
         legend: {
           display: true,
           position: "chartArea", // Position inside the chart area
-          align: "end", // Align to the start of the chart area
+          align: "start", // Align to the start of the chart area
           labels: {
+            color: "white",
             usePointStyle: true, // Use point styles
             font: {
-              size: 12, // Adjust the font size
+              size: 10, // Adjust the font size
             },
             boxWidth: 20, // Adjust the box width
             padding: 10, // Adjust the padding

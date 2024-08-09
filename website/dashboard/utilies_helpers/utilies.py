@@ -13,6 +13,7 @@ task_drivers = {}
 
 @task_revoked.connect
 def on_task_revoked(request, terminated, signum, expired, **kwargs):
+    redis_client.zrem("celery.insertion_times", task_id)
     if request.id in task_drivers:
         print('Driver is stopped')
         driver = task_drivers[request.id]

@@ -3,10 +3,10 @@ import torch
 import torch.nn as nn
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from torch.autograd import Variable 
-from torch.optim.lr_scheduler import StepLR
 from sklearn import metrics
 import math
-from torch.optim.lr_scheduler import ReduceLROnPlateau
+from torch.optim.lr_scheduler import ReduceLROnPlateau,ExponentialLR
+torch.manual_seed(1)
 
 
 class LSTM1(nn.Module):
@@ -21,7 +21,7 @@ class LSTM1(nn.Module):
         self.lstm = nn.LSTM(input_size=input_size, hidden_size=hidden_size,
                           num_layers=num_layers, batch_first=True) #lstm
         self.fc_1 =  nn.Linear(hidden_size, 128) #fully connected 1
-        self.fc = nn.Linear(128, num_classes) #fully connected last layer
+        self.fc_2 = nn.Linear(128, num_classes) #fully connected last layer
 
         self.relu = nn.ReLU()
     
@@ -30,12 +30,13 @@ class LSTM1(nn.Module):
         c_0 = Variable(torch.zeros(self.num_layers, x.size(0), self.hidden_size)) #internal state
         # Propagate input through LSTM
         output, (hn, cn) = self.lstm(x, (h_0, c_0)) #lstm with input, hidden, and internal state
+        hn = hn[-1]
         hn = hn.view(-1, self.hidden_size) #reshaping the data for Dense layer next
         out = self.relu(hn)
-        out = self.fc_1(out) #first Dense
-        out = self.relu(out) #relu
-        out = self.fc(out) #Final Output
+        out = self.relu(self.fc_1(out)) #first Dense
+        out = self.fc_2(out) 
         return out
+
 
 def split_train_test(data,training_split = 0.8):
     data = data.copy()
@@ -73,16 +74,15 @@ def split_train_test(data,training_split = 0.8):
 
     return X_train_tensors, y_train_tensors, X_test_tensors, y_test_tensors,mm,features_used,num_of_features,X_lagged,y,ss
 
-def train(async_data,data,progress_recorder,progress_counter,progress_total,num_epochs):
-    torch.manual_seed(1)
+def train(async_data,data,progress_recorder,progress_counter,progress_total,num_epochs,months):
     data_stock = data.copy()
-    learning_rate = 0.0001 #0.001 lr
-    
+    learning_rate = 0.000005#0.001 
+
     training_split = 0.8
     X_train, y_train, X_test, y_test,scaler,features_used,num_of_features,x_clean,y_clean,data_scaler = split_train_test(data_stock, training_split = training_split)
 
     input_size = num_of_features #number of features
-    hidden_size = 50 #number of features in hidden state
+    hidden_size = 25  #number of features in hidden state
     num_layers = 1 #number of stacked lstm layers
 
     num_classes = 1 #number of output classes 
@@ -90,9 +90,10 @@ def train(async_data,data,progress_recorder,progress_counter,progress_total,num_
     model = LSTM1(num_classes, input_size, hidden_size, num_layers, X_train.shape[1])
     criterion = torch.nn.MSELoss()    # mean-squared error for regression
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate) 
-    scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=10)
-    
-    patience = 10000
+    scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.9, patience=1)
+    #scheduler = ExponentialLR(optimizer, gamma=0.95)
+
+    patience = 100
 
     train_loss_array = []
     test_loss_array = []
@@ -105,6 +106,7 @@ def train(async_data,data,progress_recorder,progress_counter,progress_total,num_
     for epoch in range(num_epochs):
         if async_data.is_aborted():
             break
+        
         model.train()
         optimizer.zero_grad()
         outputs = model(X_train) #forward pass
@@ -129,6 +131,7 @@ def train(async_data,data,progress_recorder,progress_counter,progress_total,num_
         current_lr = optimizer.param_groups[0]['lr']
         learning_rates.append(current_lr)
 
+
         if loss_test < best_loss:
             best_loss = loss_test
             epochs_with_no_improvements = 0
@@ -136,7 +139,7 @@ def train(async_data,data,progress_recorder,progress_counter,progress_total,num_
         else:
             epochs_with_no_improvements += 1
 
-        if epoch % 200 == 0:
+        if epoch % 400 == 0:
             progress_recorder.set_progress(progress_counter, progress_total,description='Training Model ...')
         progress_counter+= 1
 
@@ -144,6 +147,7 @@ def train(async_data,data,progress_recorder,progress_counter,progress_total,num_
             break
 
         model.train()
+
 
     if epochs_with_no_improvements == patience:
         progress_total = progress_counter + 1 + 78
@@ -166,9 +170,6 @@ def train(async_data,data,progress_recorder,progress_counter,progress_total,num_
     next_day_close = scaler.inverse_transform(next_day_close)
     next_day_close = next_day_close.flatten()[0]
 
-    print(X_test.shape)
-    print(X_test[-1].shape)
-    print(X_test[-1])
     RMSE = round(math.sqrt(metrics.mean_squared_error(y_test_unscaled.flatten(), true_pred_close_test.flatten())),5)
     RMSE_naive = round(math.sqrt(metrics.mean_squared_error(y_test_unscaled.flatten(), list(data_stock['Close'].iloc[:-1])[len(true_pred_close_train):])),5)
     r_squared = round(metrics.r2_score(y_test_unscaled.flatten(), true_pred_close_test.flatten()), 5)
@@ -184,6 +185,8 @@ def train(async_data,data,progress_recorder,progress_counter,progress_total,num_
     y_axis_close_train = list(true_pred_close_train.flatten())
 
     corro_features,corrolation_values = calculate_correlations(x_clean,y_clean)
+    print(corro_features)
+    print(corrolation_values)
     
     return dates_train_x_axis, y_axis_close_train, dates_test_x_axis, y_axis_close_test,progress_counter,progress_total,features_used,RMSE, \
             corro_features,corrolation_values, dates[1:],r_squared,r_squared_naive,RMSE_naive,round(train_loss_array[-1],5),round(test_loss_array[-1],5), \

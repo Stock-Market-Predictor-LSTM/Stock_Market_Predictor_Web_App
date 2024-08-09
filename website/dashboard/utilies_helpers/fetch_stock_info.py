@@ -8,41 +8,54 @@ from dashboard.pytorch_models import train_model
 import pandas_market_calendars as mcal
 import pandas as pd
 from dashboard.utilies_helpers.recent_news import get_recent_news
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 
 @shared_task(bind=True, base = AbortableTask)
 def get_close_price(self,data):
     progress_counter = 1
-    epochs = 1000
+    epochs = 30000
 
     progress_total = epochs+4+82
     progress_recorder = ProgressRecorder(self)
     start_date, end_date, ticker= extract_data(data)
     progress_recorder.set_progress(progress_counter, progress_total,description='Downloading Stock Data ...')
-    data_stock = yf.download(ticker, start=start_date, end= end_date)
 
+    date_obj = datetime.strptime(start_date, '%Y-%m-%d')
+    one_month_before = date_obj - relativedelta(months=1)
+    one_month_before_str = one_month_before.strftime('%Y-%m-%d')
+    data_stock = yf.download(ticker, start=one_month_before_str, end= end_date)
+    
     progress_counter+= 1
     progress_recorder.set_progress(progress_counter, progress_total,description='Calculating Indicators ...')
-    macd, signal_line = get_macd(data_stock)
 
-    if 'macd_signal' in data:
+    if 'macd' in data or 'signal' in data:
         data_stock['EMA12'] = data_stock['Close'].ewm(span=12, adjust=False).mean()
         data_stock['EMA26'] = data_stock['Close'].ewm(span=26, adjust=False).mean()
         data_stock['MACD'] = data_stock['EMA12'] - data_stock['EMA26']
         data_stock['Signal Line'] = data_stock['MACD'].ewm(span=9, adjust=False).mean()
         data_stock = data_stock.drop(columns = ['EMA12','EMA26'])
+    if 'MACD' in data_stock and 'macd' not in data:
+        data_stock = data_stock.drop(columns = ['MACD'])
+    if 'Signal Line' in data_stock and 'signal' not in data:
+        data_stock = data_stock.drop(columns = ['Signal Line'])
     if '26_ema' in data:
         data_stock['26 EMA'] = data_stock['Close'].ewm(span=26, adjust=False).mean()
     if '21_ema' in data:
         data_stock['21 EMA'] = data_stock['Close'].ewm(span=21, adjust=False).mean()
     if '9_ema' in data:
         data_stock['9 EMA'] = data_stock['Close'].ewm(span=9, adjust=False).mean()
-    if 'bollinger_bands' in data:
+    if 'upper_bollinger_bands' in data or 'lower_bollinger_bands' in data:
         data_stock['SMA20'] = data_stock['Close'].rolling(window=20).mean()
         data_stock['SD20'] = data_stock['Close'].rolling(window=20).std()
         data_stock['Upper Bollinger Band'] = data_stock['SMA20'] + 2 * data_stock['SD20']
         data_stock['Lower Bollinger Band'] = data_stock['SMA20'] - 2 * data_stock['SD20']
         data_stock = data_stock.drop(columns = ['SMA20','SD20'])
+    if 'Upper Bollinger Band' in data_stock and 'upper_bollinger_bands' not in data:
+        data_stock = data_stock.drop(columns = ['Upper Bollinger Band'])
+    if 'Lower Bollinger Band' in data_stock and 'lower_bollinger_bands' not in data:
+        data_stock = data_stock.drop(columns = ['Lower Bollinger Band'])
     if 'SMA20' in data:
         data_stock['20 SMA'] = data_stock['Close'].rolling(window=20).mean()
     if 'high' not in data:
@@ -60,22 +73,33 @@ def get_close_price(self,data):
         data_stock = data_stock.drop(columns = ['Volume'])
     if 'open' not in data:
         data_stock = data_stock.drop(columns = ['Open'])
+
+    start_date_obj = pd.to_datetime(start_date)
+    data_stock = data_stock[data_stock.index >= start_date_obj]
+
     progress_counter+= 1
     progress_recorder.set_progress(progress_counter, progress_total,description='Calculating Indicators ...')
 
+    difference = relativedelta(datetime.strptime(start_date, '%Y-%m-%d'), datetime.strptime(end_date, '%Y-%m-%d'))
+    months = difference.years * 12 + difference.months
     x_axis_close_train, y_axis_close_train, x_axis_close_test, y_axis_close_test, c, t, \
     features_used, RMSE, corro_features, corrolation_values, naive_dates,r_squared,r_squared_naive, \
     RMSE_naive,train_loss,test_loss,next_day_close,train_array,test_array = \
-    train_model.train(self, data_stock, progress_recorder, progress_counter, progress_total, epochs)
+    train_model.train(self, data_stock, progress_recorder, progress_counter, progress_total, epochs,months)
 
     beat_naive = RMSE < RMSE_naive
 
     progress_counter = c
     progress_total = t
-
-    news_dates,news_headline,news_sentiments,c, t = get_recent_news(self,progress_recorder,progress_counter,progress_total,ticker)
-    progress_counter = c
-    progress_total = t
+    if 'news_check' in data:
+        news_dates,news_headline,news_sentiments,c, t = get_recent_news(self,progress_recorder,progress_counter,progress_total,ticker)
+        progress_counter = c
+        progress_total = t
+    else:
+        news_dates = ['Dates' for i in range(8)]
+        news_headline = ['(Waiting for Data)' for i in range(8)]
+        news_sentiments = [0 for i in range(8)]
+        progress_counter = progress_total-1
     times = [x.strftime('%d-%m-%Y') for x in data_stock.index]
 
     next_trading_day = get_next_trading_day(times[-1])
