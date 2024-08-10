@@ -40,15 +40,29 @@
                         <option value="NVDA" {% if form_data and form_data.ticker == "NVDA" %}selected{% endif %}>NVDA</option>
                     </select>
                 </div>
-        
-                <div class="inputs">
-                    <label for="start_date">Start Date:</label>
-                    <input type="date" id="start_date" name="start_date" value="{{ form_data.start_date|default_if_none:'' }}" />
+                
+                <div class="dates-panel">
+                  <div class="inputs">
+                      <label for="start_date">Start Date:</label>
+                      <input type="date" id="start_date" name="start_date" value="{{ form_data.start_date|default_if_none:'' }}" />
+                  </div>
+
+                  <div class="inputs">
+                      <label for="end_date">End Date:</label>
+                      <input type="date" id="end_date" name="end_date" value="{{ form_data.end_date|default_if_none:'' }}" />
+                  </div>
                 </div>
 
-                <div class="inputs">
-                    <label for="end_date">End Date:</label>
-                    <input type="date" id="end_date" name="end_date" value="{{ form_data.end_date|default_if_none:'' }}" />
+                <div class="model-inputs-panel">
+                  <div class="inputs">
+                      <label for="learning_rate">Learning Rate:</label>
+                      <input type="text" id="learning_rate" name="learning_rate" value="{% if form_data and form_data.learning_rate != None or form_data.learning_rate == ''%}{{ form_data.learning_rate }}{% else %}0.000005{% endif %}"/>
+                  </div>
+
+                  <div class="inputs">
+                      <label for="factor">Factor:</label>
+                      <input type="text" id="factor" name="factor" value="{% if form_data and form_data.factor != None or form_data.factor == '' %}{{ form_data.factor }}{% else %}0.95{% endif %}" />
+                  </div>
                 </div>
 
                 <div class="checkbox-group news-check">

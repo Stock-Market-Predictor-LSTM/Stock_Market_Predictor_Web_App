@@ -74,9 +74,13 @@ def split_train_test(data,training_split = 0.8):
 
     return X_train_tensors, y_train_tensors, X_test_tensors, y_test_tensors,mm,features_used,num_of_features,X_lagged,y,ss
 
-def train(async_data,data,progress_recorder,progress_counter,progress_total,num_epochs,months):
+def train(async_data,data,progress_recorder,progress_counter,progress_total,num_epochs,learning_rate,factor):
+
+    learning_rate = float(learning_rate.replace(' ', ''))
+    factor = float(factor.replace(' ', ''))
+
     data_stock = data.copy()
-    learning_rate = 0.000005#0.001 
+    learning_rate = learning_rate#0.001 
 
     training_split = 0.8
     X_train, y_train, X_test, y_test,scaler,features_used,num_of_features,x_clean,y_clean,data_scaler = split_train_test(data_stock, training_split = training_split)
@@ -90,7 +94,7 @@ def train(async_data,data,progress_recorder,progress_counter,progress_total,num_
     model = LSTM1(num_classes, input_size, hidden_size, num_layers, X_train.shape[1])
     criterion = torch.nn.MSELoss()    # mean-squared error for regression
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate) 
-    scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=0.9, patience=1)
+    scheduler = ReduceLROnPlateau(optimizer, mode='min', factor=factor, patience=1)
     #scheduler = ExponentialLR(optimizer, gamma=0.95)
 
     patience = 100
@@ -140,7 +144,7 @@ def train(async_data,data,progress_recorder,progress_counter,progress_total,num_
             epochs_with_no_improvements += 1
 
         if epoch % 400 == 0:
-            progress_recorder.set_progress(progress_counter, progress_total,description='Training Model ...')
+            progress_recorder.set_progress(progress_counter, progress_total,description=f'Training Model ... (Train Loss: {loss.item():.2e}, Test Loss: {loss_test.item():.2e})')
         progress_counter+= 1
 
         if epochs_with_no_improvements == patience:
@@ -151,7 +155,7 @@ def train(async_data,data,progress_recorder,progress_counter,progress_total,num_
 
     if epochs_with_no_improvements == patience:
         progress_total = progress_counter + 1 + 78
-    progress_recorder.set_progress(progress_counter, progress_total,description='Training Model ...')
+    progress_recorder.set_progress(progress_counter, progress_total,description='Getting Model Metrics...')
 
     best_model.eval()
     with torch.no_grad():

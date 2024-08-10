@@ -13,7 +13,7 @@ task_drivers = {}
 
 @task_revoked.connect
 def on_task_revoked(request, terminated, signum, expired, **kwargs):
-    redis_client.zrem("celery.insertion_times", task_id)
+    redis_client.zrem("celery.insertion_times", request.id)
     if request.id in task_drivers:
         print('Driver is stopped')
         driver = task_drivers[request.id]
@@ -74,6 +74,36 @@ def validate_data(data):
         return (False, 'Please choose a start date.')
     if not data.get('end_date'):
         return (False, 'Please choose a end date.')
+    if not data.get('learning_rate'):
+        return (False, 'Please choose a learning rate.')
+    if not data.get('factor'):
+        return (False, 'Please choose a factor.')
+    
+    factor_val = ''
+    learning_rate_val = ''
+    try:
+        factor_val = float(data.get('factor').replace(' ', ''))
+    except ValueError:
+        return (False, 'Please make sure factor is not a string.')
+    
+    try:
+        learning_rate_val = float(data.get('learning_rate').replace(' ', ''))
+    except ValueError:
+        return (False, 'Please make sure learning rate is not a string.')
+
+    if isinstance(factor_val, str):
+        return (False, 'Please make sure factor is not a string.')
+    
+    if isinstance(learning_rate_val, str):
+        return (False, 'Please make sure learning rate is not a string.')
+    
+    if learning_rate_val == float(0):
+        return (False, 'Please make sure learning rate is not 0.')
+
+    if factor_val > 1 or factor_val < 0:
+        return (False, 'Please make sure factor is between 0 and 1')
+    
+
     
     
     try:

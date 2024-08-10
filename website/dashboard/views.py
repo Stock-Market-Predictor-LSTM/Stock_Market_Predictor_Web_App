@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from django.urls import reverse
 from datetime import datetime
-from dashboard.utilies_helpers.utilies import request_to_dict,validate_data
+from dashboard.utilies_helpers.utilies import request_to_dict,validate_data,redis_client
 from dashboard.utilies_helpers.fetch_stock_info import get_close_price
 from celery.result import AsyncResult
 from celery import Celery
@@ -19,7 +19,9 @@ def dashboard(request):
         task = get_close_price.AsyncResult(request.session.get('task_id', None))
         task.revoke(terminate=True)
         task.abort()
+        redis_client.zrem("celery.insertion_times", request.session['task_id'])
         request.session['task_id'] = None
+        
 
     task_id = None
 
@@ -45,6 +47,7 @@ def load_data(request):
         task = get_close_price.AsyncResult(request.session.get('task_id', None))
         task.revoke(terminate=True)
         task.abort()
+        redis_client.zrem("celery.insertion_times", request.session['task_id'])
         request.session['task_id'] = None
     data = request_to_dict(request)
     print(data)
@@ -56,7 +59,6 @@ def load_data(request):
         task_id = task.id
         request.session['task_id'] = task.id
         
-
 
     request.session['form_data'] = data
     request.session['data_valid'] = data_valid

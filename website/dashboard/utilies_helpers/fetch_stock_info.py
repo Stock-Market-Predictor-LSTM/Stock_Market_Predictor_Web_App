@@ -80,12 +80,12 @@ def get_close_price(self,data):
     progress_counter+= 1
     progress_recorder.set_progress(progress_counter, progress_total,description='Calculating Indicators ...')
 
-    difference = relativedelta(datetime.strptime(start_date, '%Y-%m-%d'), datetime.strptime(end_date, '%Y-%m-%d'))
-    months = difference.years * 12 + difference.months
+    # difference = relativedelta(datetime.strptime(start_date, '%Y-%m-%d'), datetime.strptime(end_date, '%Y-%m-%d'))
+    # months = difference.years * 12 + difference.months
     x_axis_close_train, y_axis_close_train, x_axis_close_test, y_axis_close_test, c, t, \
     features_used, RMSE, corro_features, corrolation_values, naive_dates,r_squared,r_squared_naive, \
     RMSE_naive,train_loss,test_loss,next_day_close,train_array,test_array = \
-    train_model.train(self, data_stock, progress_recorder, progress_counter, progress_total, epochs,months)
+    train_model.train(self, data_stock, progress_recorder, progress_counter, progress_total, epochs,data['learning_rate'],data['factor'])
 
     beat_naive = RMSE < RMSE_naive
 
