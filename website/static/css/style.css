@@ -67,7 +67,7 @@ form input[type="submit"] {
 
 #learning_rate,
 #factor {
-  width: 80px;
+  width: 40%;
 }
 
 .model-inputs-panel .inputs input {
@@ -222,6 +222,8 @@ header nav a.back_to_projects {
   background-color: white;
   box-sizing: border-box;
   padding-top: 10px;
+  padding-left: 5px;
+  padding-right: 5px;
   position: relative;
   left: 50%;
   transform: translateX(-50%);
@@ -599,7 +601,7 @@ ul {
 }
 
 .chart_button.train-loss-btn-div {
-  height: 10%;
+  height: 18px;
   flex: 3;
 }
 
@@ -609,45 +611,7 @@ ul {
   height: 90%;
 }
 
-/* @media only screen and (max-width: 1660px) {
-  form label,
-  form select,
-  form input[type="date"],
-  form input[type="checkbox"],
-  .feature-selction-info {
-    font-size: 0.7em;
-  }
-
-  form input[type="submit"],
-  .feature-selction {
-    font-size: 0.9em;
-  }
-
-  #progress-bar-message,
-  .error_form {
-    font-size: 0.9em;
-  }
-
-  .model-info {
-    font-size: 1.5em;
-  }
-
-  .ml-info,
-  .info-container-full {
-    font-size: 0.8em;
-  }
-
-  .info p,
-  ul {
-    font-size: 0.6em;
-  }
-
-  .news-wrapper p {
-    font-size: 0.9em;
-  }
-}
-
-@media only screen and (max-width: 1670px) {
+@media (max-width: 1200px) {
   header nav a.title {
     font-size: 1.5em;
   }
@@ -657,18 +621,17 @@ ul {
   form input[type="date"],
   form input[type="checkbox"],
   .feature-selction-info {
-    font-size: 0.7em;
+    font-size: 0.6em;
   }
 
   form input[type="submit"],
-  .feature-selction,
-  #abort {
-    font-size: 0.7em;
+  .feature-selction {
+    font-size: 0.6em;
   }
 
   #progress-bar-message,
   .error_form {
-    font-size: 0.7em;
+    font-size: 0.6em;
   }
 
   .model-info {
@@ -686,10 +649,11 @@ ul {
   }
 
   .news-wrapper p {
-    font-size: 0.7em;
+    font-size: 0.9em;
   }
 }
 
+/*
 @media only screen and (max-width: 1220px) {
   header nav a.title {
     font-size: 1.5em;
