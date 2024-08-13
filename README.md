@@ -71,9 +71,9 @@ Python Version Used: 3.12.3
    The website is set up to use port 8001 for websockets.
 
 8. **Load Sentiment entity model:**
-   Please refer to my [repo](https://github.com/Stock-Market-Predictor-LSTM/Entity-Sentiment-Anlaysis-and-Stock-Headline-Scraper) to train and save an entity sentiment model. Alternitively you can use the model I trained [here](https://drive.google.com/drive/folders/1WSHzK9bkSFi3_NfE9TWQmEIuGhUkaPoF) Simply place the tokenizer directory and model dict in the folder ```website/dashboard/utilities_helpers```.
+   Please refer to my [repo](https://github.com/Stock-Market-Predictor-LSTM/Entity-Sentiment-Anlaysis-and-Stock-Headline-Scraper) to train and save an entity sentiment model. Alternitively you can use the model I trained [here](https://drive.google.com/drive/folders/1WSHzK9bkSFi3_NfE9TWQmEIuGhUkaPoF). Simply place the tokenizer directory and model dict in the folder ```website/dashboard/utilities_helpers```.
    
-10. **Start the Django Development Server**:
+9. **Start the Django Development Server**:
    Navigate to the ```Stock_Market_Predictor_Web_App/website``` directory and use the following command:
    ```bash
    python manage.py runserver
@@ -84,6 +84,7 @@ Python Version Used: 3.12.3
 - **Redis Configuration**: Ensure that the Redis settings in dashboard/utilies_helpers/utilies.py are pointing to the correct Redis server.
 
 ## Usage
+Navigate to 'http://127.0.0.1:8000/dashboard/'
 
 1. Load Data:
 - Select a stock ticker (AAPL, GOOG, NVDA).
