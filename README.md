@@ -61,7 +61,12 @@ Python Version Used: 3.12.3
    ```bash
    celery -A website worker --loglevel=info
    ```
-7. **Installing and Setting Up Daphne:**
+
+   Moreover, ensure you also configure a beat which is responsible for cleaning the task results in the database every 10 minutes.
+   ```bash
+   celery -A website beat --loglevel=$LOG_LEVEL
+   ```
+8. **Installing and Setting Up Daphne:**
    Daphne is an HTTP, HTTP2, and WebSocket server for ASGI and is often used in Django projects that utilize Django Channels for handling WebSocket connections. Below are instructions for installing and configuring Daphne.
 
    To start your Django application with Daphne, navigate to the ```Stock_Market_Predictor_Web_App/website``` directory and use the following command:
@@ -70,14 +75,14 @@ Python Version Used: 3.12.3
    ```
    The website is set up to use port 8001 for websockets.
 
-8. **Load Sentiment entity model:**
+9. **Load Sentiment entity model:**
    Please refer to my [repo](https://github.com/Stock-Market-Predictor-LSTM/Entity-Sentiment-Anlaysis-and-Stock-Headline-Scraper) to train and save an entity sentiment model. Alternitively you can use the model I trained [here](https://drive.google.com/drive/folders/1WSHzK9bkSFi3_NfE9TWQmEIuGhUkaPoF). Simply place the tokenizer directory and model dict in the folder ```website/dashboard/utilities_helpers```.
    
-9. **Start the Django Development Server**:
+10. **Start the Django Development Server**:
    Navigate to the ```Stock_Market_Predictor_Web_App/website``` directory and use the following command:
-   ```bash
-   python manage.py runserver
-   ```
+      ```bash
+      python manage.py runserver
+      ```
 
 ## Configuration
 - **Celery Configuration**: Modify the Celery settings in website/celery.py as per your environment.
