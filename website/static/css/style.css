@@ -653,46 +653,49 @@ ul {
   }
 }
 
-/*
-@media only screen and (max-width: 1220px) {
+@media only screen and (max-width: 1100px) {
+  .wrapper {
+    flex-direction: column;
+  }
+
+  .title {
+    font-size: 0.1em;
+  }
+
   header nav a.title {
-    font-size: 1.5em;
+    font-size: 0.7em;
   }
 
-  form label,
-  form select,
-  form input[type="date"],
-  form input[type="checkbox"],
-  .feature-selction-info {
-    font-size: 0.5em;
+  #queue-position {
+    font-size: 0.7em;
   }
 
-  form input[type="submit"],
-  .feature-selction,
-  #abort {
-    font-size: 0.6em;
+  header nav div a.back_to_projects {
+    font-size: 0.7em;
   }
 
-  #progress-bar-message,
-  .error_form {
-    font-size: 0.5em;
+  .logo-img {
+    height: 2em;
   }
 
-  .model-info {
-    font-size: 1.1em;
+  .leftpanel {
+    left: 50%;
+    transform: translateX(-50%);
+    height: 50%;
+    width: 80%;
   }
 
-  .ml-info,
-  .info-container-full {
-    font-size: 0.5em;
+  .graphs {
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: 100%;
   }
 
-  .info p,
-  ul {
-    font-size: 0.5em;
+  .right-panel {
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: 50%;
   }
-
-  .news-wrapper p {
-    font-size: 0.6em;
-  }
-} */
+}

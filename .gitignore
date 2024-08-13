@@ -5,4 +5,4 @@ celery.bat
 redis.bat
 Redis-x64-3.0.504
 geckodriver.exe
-entire_modelv4_state_dict.pth
+entire_model_state_dict.pth

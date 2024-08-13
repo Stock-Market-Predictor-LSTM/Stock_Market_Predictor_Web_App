@@ -2,7 +2,7 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 import asyncio
-from dashboard.utilies_helpers.utilies import get_task_position    # import the helper function
+from dashboard.utilities_helpers.utilities import get_task_position    # import the helper function
 
 class QueuePositionConsumer(AsyncWebsocketConsumer):
     async def connect(self):
