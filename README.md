@@ -12,17 +12,7 @@ This Django-based web application is designed to predict stock prices using mach
 - **Visualization**: Displays price, volume, and correlation charts with interactive zoom options.
 
 ## Getting Started
-
-### Prerequisites
-
-- Python 3.8+
-- Django 3.2+
-- Celery
-- Redis
-- yFinance
-- PyTorch
-- Transformers (Hugging Face)
-- Selenium
+Python Version Used: 3.12.3
 
 ### Installation
 
@@ -79,8 +69,11 @@ This Django-based web application is designed to predict stock prices using mach
    daphne -p 8001 website.asgi:application
    ```
    The website is set up to use port 8001 for websockets.
+
+8. **Load Sentiment entity model:**
+   Please refer to my [repo](https://github.com/Stock-Market-Predictor-LSTM/Entity-Sentiment-Anlaysis-and-Stock-Headline-Scraper) to train and save an entity sentiment model. Alternitively you can use the model I trained [here](https://drive.google.com/drive/folders/1WSHzK9bkSFi3_NfE9TWQmEIuGhUkaPoF) Simply place the tokenizer directory and model dict in the folder ```website/dashboard/utilities_helpers```.
    
-9. **Start the Django Development Server**:
+10. **Start the Django Development Server**:
    Navigate to the ```Stock_Market_Predictor_Web_App/website``` directory and use the following command:
    ```bash
    python manage.py runserver
@@ -149,7 +142,8 @@ website/
 ├── manage.py
 └── delete_tables.py - Used to manual delete celery task results from the database. (Django project is configured to delete every 10 minutes)
 ```
-
+## More information
+Please visit my [LSTM repo](https://github.com/Stock-Market-Predictor-LSTM/stock-market-predictor-lstm) for more information regarding how the LSTM is used to predict stock prices.
 ## Future Enhancements
 - **Unrestricted Historical News Data**: Plan to integrate more extensive historical news data.
 - **Improved Headline Scraping**: Enhancing the efficiency of scraping news headlines.
