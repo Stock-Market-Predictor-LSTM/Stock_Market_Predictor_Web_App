@@ -37,18 +37,51 @@ This Django-based web application is designed to predict stock prices using mach
    ```
 3. **Set up Redis**:
    Install Redis on your machine or use a hosted Redis service.
+   #### Installing Redis
+   Redis is an in-memory data structure store that can be used as a message broker for Celery. Below are instructions for installing Redis on different platforms.
+
+   ##### Install Redis on Ubuntu/Debian
    
-4. **Run Migrations**:
+   1. **Update your package list**:
+      ```bash
+      sudo apt-get update
+      ```
+   2. **Install Redis:**
+      ```bash
+      sudo apt-get install redis-server
+      ```
+   3. **Start and enable Redis to run on system boot:**
+      ```bash
+      sudo systemctl enable redis-server
+      sudo systemctl start redis-server
+      ```
+   4. **Verify that Redis is running:**
+      ```bash
+      sudo systemctl status redis-server
+      ```
+      Ensure redis is operating on port 6379.
+
+5. **Run Migrations**:
    ```bash
    python manage.py migrate
    ```
 
-5. **Start Celery**:
-   Ensure Celery is running for background task processing:
+6. **Start Celery**:
+   Ensure Celery is running for background task processing - navigate to the ```Stock_Market_Predictor_Web_App/website``` directory and use the following command:
    ```bash
    celery -A website worker --loglevel=info
    ```
-6. **Start the Django Development Server**:
+7. **Installing and Setting Up Daphne:**
+   Daphne is an HTTP, HTTP2, and WebSocket server for ASGI and is often used in Django projects that utilize Django Channels for handling WebSocket connections. Below are instructions for installing and configuring Daphne.
+
+   To start your Django application with Daphne, navigate to the ```Stock_Market_Predictor_Web_App/website``` directory and use the following command:
+   ```bash
+   daphne -p 8001 website.asgi:application
+   ```
+   The website is set up to use port 8001 for websockets.
+   
+9. **Start the Django Development Server**:
+   Navigate to the ```Stock_Market_Predictor_Web_App/website``` directory and use the following command:
    ```bash
    python manage.py runserver
    ```
@@ -74,13 +107,48 @@ This Django-based web application is designed to predict stock prices using mach
 - Visualizations for prices, volume, and feature correlations will be available.
 
 ## Project Structure
-- **views.py**: Contains the main logic for handling requests and loading data.
-- **urls.py**: Defines URL patterns for the dashboard and data loading.
-- **routing.py**: Configures WebSocket routing for real-time queue position updates.
-- **fetch_stock_info**.py: Contains the Celery task for fetching stock data and calculating indicators.
-- **recent_news.py**: Handles recent news scraping and sentiment analysis using a fine-tuned BERT model.
-- **utilies.py**: Utility functions for task management, data validation, and Redis interaction.
-- **basic.html**: The main template for the dashboard, featuring forms for data input and sections for displaying results.
+```
+website/
+├── dashboard/
+| ├── templates/
+| | └── dashboard/
+| | | └── basic.html - Contains the base html script to render the webpage.
+| ├── pytorch_models/
+| | ├── sentiment_model.py - Entity sentiment analysis model.
+| | └── train_model.py - Trains the LSTM to predict stock prices.
+| ├── utilities_helpers/
+| | ├── tokeniszer_directory/ - (Your entity sentiment tokeniszer, refer to 'Downloading Entity-Sentiment Model Section')
+| | ├── enitire_model_state_dict.pth (Your entity sentiment model, refer to 'Downloading Entity-Sentiment Model Section')
+| | ├── fetch_stock_info.py - Contains the Celery task for fetching stock data.
+| | ├── recent_news.py -  Handles recent news scraping and sentiment analysis using a fine-tuned BERT model.
+| | └── utilities.py - Handles tasks once completed and containers helper functions for views.py such as validating data and turning get request to a dictionary.
+│ ├── admin.py
+│ ├── apps.py
+│ ├── consumers.py - Websocket for the queue position counter.
+│ ├── models.py
+│ ├── routing.py - Configures WebSocket routing for real-time queue position updates.
+│ ├── urls.py
+│ └── views.py
+├── website/
+│ ├── asgi.py
+│ ├── settings.py
+│ ├── urls.py
+│ ├── wsgi.py
+│ ├── views.py
+│ └── celery.py
+├── static/
+| ├── celery_progress/
+| | ├── celery_progress.js - Contains javascript to handle progress bar updates. (External)
+| | ├── create_graphs.js - Creates graphs when page loads.
+| | └── update_features.js - Updates features on the page once data is loaded.
+| ├── css/
+| | └── style.css - CSS styling for the webpage.
+| ├── img/
+| | ├── favicon.ico
+| | └── logo_full.png
+├── manage.py
+└── delete_tables.py - Used to manual delete celery task results from the database. (Django project is configured to delete every 10 minutes)
+```
 
 ## Future Enhancements
 - **Unrestricted Historical News Data**: Plan to integrate more extensive historical news data.
