@@ -5,7 +5,7 @@ This Django-based web application is designed to predict stock prices using LSTM
 ## Demo
 
 ![dashboard](https://github.com/user-attachments/assets/c3160539-aaad-4a2a-a54d-7c7bd80cfd86)
-Check out the demo here https://stockmarketpredictor.ganelsproject.com .
+Check out the demo here https://stockmarketpredictor.ganelsproject.com. Website uses Nginx, supervisor and gunicorn. 
 ## Features
 
 - **Stock Data Loading**: Load historical stock data for specific tickers.
