@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-#ls@hmv+7!dbg2^l$f=i*s9c-*1#5)!)#krw%k!yfu%q0qi5-*'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['stockmarketpredictor.ganelsproject.com','127.0.0.1', '159.65.56.75','www.stockmarketpredictor.ganelsproject.com']
 

@@ -1,7 +1,9 @@
 **/env
+**/Redis-x64-5.0.14.1
 **/tokenizer_directory
 env.bat
 celery.bat
 redis.bat
 geckodriver.exe
 entire_model_state_dict.pth
+daphne.bat
