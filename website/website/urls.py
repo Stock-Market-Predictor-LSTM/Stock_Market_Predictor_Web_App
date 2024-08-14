@@ -20,7 +20,6 @@ from website import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('dashboard/', include("dashboard.urls")),  
-    path('', views.redirect_to_external, name = 'home'),
+    path('', include("dashboard.urls")),  
     path('celery-progress/', include('celery_progress.urls')),
 ]
