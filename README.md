@@ -1,7 +1,11 @@
 # Stock Market Predictor Dashboard
 
-This Django-based web application is designed to predict stock prices using machine learning models. It allows users to load stock data, select specific indicators, and run a predictive model based on the selected inputs. The app also provides insights into recent news sentiment related to the chosen stock ticker.
+This Django-based web application is designed to predict stock prices using LSTMs and provides a user-friendly way to perform exploratory analysis. It allows users to load stock data, select specific indicators, and run a predictive model based on the selected inputs. The app also provides insights into recent news sentiment related to the chosen stock ticker.
 
+## Demo
+
+![dashboard](https://github.com/user-attachments/assets/c3160539-aaad-4a2a-a54d-7c7bd80cfd86)
+Check out the demo here https://stockmarketpredictor.ganelsproject.com .
 ## Features
 
 - **Stock Data Loading**: Load historical stock data for specific tickers.
@@ -89,7 +93,7 @@ Python Version Used: 3.12.3
 - **Redis Configuration**: Ensure that the Redis settings in dashboard/utilies_helpers/utilies.py are pointing to the correct Redis server.
 
 ## Usage
-Navigate to 'http://127.0.0.1:8000/dashboard/'
+Navigate to 'http://127.0.0.1:8000/'
 
 1. Load Data:
 - Select a stock ticker (AAPL, GOOG, NVDA).
