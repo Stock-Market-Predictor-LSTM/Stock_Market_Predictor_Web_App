@@ -1,8 +1,7 @@
 **/env
-**/Redis-x64-3.0.504
+**/tokenizer_directory
 env.bat
 celery.bat
 redis.bat
-Redis-x64-3.0.504
 geckodriver.exe
 entire_model_state_dict.pth
