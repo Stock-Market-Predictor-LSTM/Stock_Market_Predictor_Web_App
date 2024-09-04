@@ -109,6 +109,9 @@ def validate_data(data):
     try:
         start_date = datetime.strptime(data.get('start_date'), '%Y-%m-%d').date()
         end_date = datetime.strptime(data.get('end_date'), '%Y-%m-%d').date()
+        if (end_date - start_date).days +1 < 7:
+            return (False, 'Please make sure you select at least 7 days.')
+
         today = datetime.today().date()
         # Check that start date is before end date
         if start_date >= end_date:
